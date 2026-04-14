@@ -108,6 +108,93 @@
       const [addressQuery, setAddressQuery] = useState(''); 
       const suggestionRef = useRef(null);
 
+      // --- Effects & Lookups (Restored functionality) ---
+      useEffect(() => {
+        const handleClickOutside = (event) => {
+          if (suggestionRef.current && !suggestionRef.current.contains(event.target)) setShowSuggestions(false);
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+      }, []);
+
+      useEffect(() => {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(async () => {
+          if (addressQuery.length > 5) {
+            try {
+              const kansasViewBox = "-102.05,40.00,-94.58,36.99";
+              const url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=us&addressdetails=1&viewbox=${kansasViewBox}&bounded=1&email=ks.insurance.app.test@gmail.com&q=${encodeURIComponent(addressQuery)}`;
+              const response = await fetch(url, { signal: controller.signal });
+              if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+              const data = await response.json();
+              setAddressSuggestions(data);
+              setShowSuggestions(true);
+            } catch (error) {
+              if (error.name !== 'AbortError') console.error("Error fetching address:", error);
+            }
+          } else {
+            setShowSuggestions(false);
+          }
+        }, 800);
+        return () => { clearTimeout(timeoutId); controller.abort(); };
+      }, [addressQuery]);
+
+      const handleAddressChange = (e) => {
+        const query = e.target.value;
+        setInsured({ ...insured, address: query });
+        setAddressQuery(query);
+      };
+
+      const handleSelectAddress = (item) => {
+        setInsured({ ...insured, address: item.display_name });
+        setShowSuggestions(false);
+        setHome({ ...home, address: item.display_name });
+        if (item.address && item.address.county) {
+          setDetectedCounty(item.address.county.replace(' County', '').trim());
+        } else {
+          setDetectedCounty('');
+        }
+      };
+
+      const handleRealtorLookup = () => {
+        if (!insured.address) return setAlertMsg("Please enter an address first.");
+        window.open(`https://www.realtor.com/realestateandhomes-search/${encodeURIComponent(insured.address)}`, '_blank');
+      };
+
+      const handleCountyLookup = () => {
+        if (!insured.address) return setAlertMsg("Please enter an address first.");
+        let countyUrl = "";
+        if (detectedCounty === "Riley") countyUrl = `http://www.riley.kansasgov.com/parcel/`; 
+        else if (detectedCounty === "Pottawatomie") countyUrl = `https://pottawatomie.kansasgov.com/parcel/`;
+        else if (detectedCounty === "Marshall") countyUrl = `http://www.marshall.kansasgov.com/parcel/`;
+        else if (detectedCounty === "Nemaha") countyUrl = `http://ks-nemaha.manatron.com/`;
+        else if (detectedCounty === "Wabaunsee") countyUrl = `https://ks1052.cichosting.com/webportal/Login.aspx`;
+        else if (detectedCounty === "Jackson") countyUrl = `https://jackson.kansasgov.com/parcel/`;
+        else {
+          const searchTerms = detectedCounty ? `${detectedCounty} county KS property search` : "county property search";
+          countyUrl = `https://www.google.com/search?q=${encodeURIComponent(insured.address + " " + searchTerms)}`;
+        }
+        window.open(countyUrl, '_blank');
+      };
+
+      const handleMvrLookup = (dlNumber) => {
+        if (!dlNumber) return setAlertMsg("Please enter a Driver's License number first.");
+        
+        if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(dlNumber).catch(e => console.error("Clipboard copy failed", e));
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = dlNumber;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try { document.execCommand('copy'); } catch (err) { console.error('Fallback copy failed', err); }
+            document.body.removeChild(textArea);
+        }
+        
+        setAlertMsg("DL copied to clipboard! Opening Kansas DOR website.");
+        setTimeout(() => window.open('https://www.kdor.ks.gov/Apps/DLStatus/login.aspx', '_blank'), 1500);
+      };
+
       // --- Utils ---
       const toggleCategory = (id) => {
         setSelectedCats(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
@@ -137,6 +224,8 @@
         setter(newList);
       };
       
+      const addVehicle = (setter, list) => setter([...list, { vin: '', year: '', make: '', model: '', coverage: 'Liability Only', deductible: '', desc: '' }]);
+
       const decodeVin = async (vin, callback) => {
         if (vin.length !== 17) return setAlertMsg("Please enter a valid 17-character VIN.");
         try {
@@ -263,7 +352,7 @@
         }
       };
 
-      // --- Effects ---
+      // --- Global UI Listeners ---
       useEffect(() => {
         const inputs = document.querySelectorAll('input, select');
         inputs.forEach(i => i.setAttribute('enterkeyhint', 'next'));
@@ -386,6 +475,16 @@
                       ))}
                     </ul>
                   )}
+                </div>
+                <div className="flex flex-col md:flex-row md:items-center gap-3 mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <span className="text-sm font-bold text-black">Quick Look-up:</span>
+                  <div className="flex gap-2">
+                    <button onClick={handleRealtorLookup} className="bg-white border border-gray-300 text-black px-3 py-1.5 rounded hover:bg-yellow-50 flex items-center justify-center gap-1 text-sm font-bold transition-colors flex-grow md:flex-grow-0"><Home className="w-4 h-4"/> Realtor.com</button>
+                  </div>
+                  <div className="flex items-center gap-2 md:ml-auto">
+                    {detectedCounty && <span className="text-xs text-slate-600 font-semibold bg-white px-2 py-1 rounded border border-gray-300">{detectedCounty} County detected</span>}
+                    <button onClick={handleCountyLookup} className="bg-black text-white px-3 py-1.5 rounded hover:bg-gray-800 flex items-center justify-center gap-1 text-sm font-bold transition-colors whitespace-nowrap"><ExternalLink className="w-4 h-4"/> Parcel Search</button>
+                  </div>
                 </div>
               </section>
 
