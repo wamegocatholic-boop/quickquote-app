@@ -43,11 +43,39 @@
     const Tractor = (p) => <Icon {...p}><circle cx="18" cy="18" r="3"/><circle cx="6" cy="18" r="2"/><path d="M3 17h3l1-4h11l1 4h2V9a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H3z"/><line x1="11" y1="7" x2="11" y2="11"/></Icon>;
     const LifeBuoy = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></Icon>;
     const Anchor = (p) => <Icon {...p}><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><line x1="5" y1="12" x2="19" y2="12"/><path d="M2 15s1.5 2 3 2 3-2 3-2 1.5 2 3 2 3-2 3-2 1.5 2 3 2 3-2 3-2"/></Icon>;
+    const Clipboard = (p) => <Icon {...p}><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></Icon>;
+    const MessageCircle = (p) => <Icon {...p}><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></Icon>;
 
     const STATES = ["AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"];
     const DEDUCTIBLES = ["$250", "$500", "$750", "$1000", "$1500", "$2000", "$2500"];
 
+    // NAICS Cheat Sheet (Common Codes)
+    const NAICS_CODES = [
+      { code: "238220", desc: "Plumbing, Heating, and Air-Conditioning Contractors" },
+      { code: "238210", desc: "Electrical Contractors" },
+      { code: "238160", desc: "Roofing Contractors" },
+      { code: "238320", desc: "Painting and Wall Covering Contractors" },
+      { code: "236118", desc: "Residential Remodelers" },
+      { code: "722511", desc: "Full-Service Restaurants" },
+      { code: "722513", desc: "Limited-Service Restaurants" },
+      { code: "445120", desc: "Convenience Stores" },
+      { code: "444220", desc: "Nursery, Garden Center, and Farm Supply Stores" },
+      { code: "447110", desc: "Gasoline Stations with Convenience Stores" },
+      { code: "531311", desc: "Residential Property Managers" },
+      { code: "531312", desc: "Nonresidential Property Managers" },
+      { code: "531110", desc: "Lessor of Residential Buildings" },
+      { code: "541330", desc: "Engineering Services" },
+      { code: "541110", desc: "Offices of Lawyers" },
+      { code: "811111", desc: "General Automotive Repair" },
+      { code: "812112", desc: "Beauty Salons" },
+      { code: "111110", desc: "Soybean Farming" },
+      { code: "111150", desc: "Corn Farming" },
+      { code: "112111", desc: "Beef Cattle Ranching and Farming" },
+      { code: "111998", desc: "All Other Miscellaneous Crop Farming" }
+    ];
+
     const CATEGORIES = [
+      { id: 'inspection', label: 'Inspection Client', icon: Clipboard },
       { id: 'home', label: 'Homeowners', icon: Home },
       { id: 'auto', label: 'Auto', icon: Car },
       { id: 'cycle', label: 'Motorcycle/ATV', icon: Bike },
@@ -67,10 +95,18 @@
     const App = () => {
       const [appStep, setAppStep] = useState('selection'); // 'selection' or 'entry'
       const [selectedCats, setSelectedCats] = useState([]);
+      const [isClientMode, setIsClientMode] = useState(false);
       
+      const [smsInfo, setSmsInfo] = useState({ name: '', phone: '' });
+
       const [insured, setInsured] = useState({
         first1: '', last1: '', ssn1: '', dob1: '', dl1: '', dlState1: 'KS', phone1: '', email1: '', address: '',
         first2: '', last2: '', ssn2: '', dob2: '', dl2: '', dlState2: 'KS', phone2: '', email2: ''
+      });
+
+      // Inspection Specific State
+      const [inspection, setInspection] = useState({
+        location: '', currentAddress: '', closingDate: '', price: '', roofAge: '', mortgage: 'Yes', autoBundle: 'No'
       });
       
       const [drivers, setDrivers] = useState([]);
@@ -88,7 +124,7 @@
 
       const [home, setHome] = useState({
         address: '', sqft: '', replacementCost: '', style: '', styleOther: '', basement: 'No', finishedBasement: 'No',
-        woodStove: 'No', detached: 'No', detachedDesc: '', age: '', siding: '',
+        woodStove: 'No', detached: 'No', detachedDesc: '', age: '', mortgage: 'Yes', siding: '',
         updateElec: '', updatePlumb: '', updateHvac: '', updateRoof: '', roofMaterial: '', roofMaterialOther: '', notes: ''
       });
 
@@ -96,6 +132,9 @@
         name: '', entity: '', fein: '', yearStarted: '', address: '', operations: '', employeesFt: '', employeesPt: '', payroll: '', income: '', classCode: '', losses: '', carrier: '', premium: '', renewalDate: ''
       });
       const [wcCodes, setWcCodes] = useState([]);
+      
+      const [naicsSearch, setNaicsSearch] = useState('');
+      const [showNaicsList, setShowNaicsList] = useState(false);
 
       const [life, setLife] = useState({ amount: '', term: '', healthNotes: '' });
       const [overallNotes, setOverallNotes] = useState('');
@@ -107,11 +146,23 @@
       const [detectedCounty, setDetectedCounty] = useState(''); 
       const [addressQuery, setAddressQuery] = useState(''); 
       const suggestionRef = useRef(null);
+      const naicsRef = useRef(null);
 
-      // --- Effects & Lookups (Restored functionality) ---
+      // --- URL Parameter Logic (Client Shareable Link) ---
+      useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('mode') === 'client') {
+          setSelectedCats(['inspection']);
+          setAppStep('entry');
+          setIsClientMode(true);
+        }
+      }, []);
+
+      // --- Effects & Lookups ---
       useEffect(() => {
         const handleClickOutside = (event) => {
           if (suggestionRef.current && !suggestionRef.current.contains(event.target)) setShowSuggestions(false);
+          if (naicsRef.current && !naicsRef.current.contains(event.target)) setShowNaicsList(false);
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -195,6 +246,17 @@
         setTimeout(() => window.open('https://www.kdor.ks.gov/Apps/DLStatus/login.aspx', '_blank'), 1500);
       };
 
+      const handleSendSms = () => {
+        if (!smsInfo.phone) return setAlertMsg("Please enter a phone number.");
+        const baseUrl = window.location.href.split('?')[0];
+        const link = `${baseUrl}?mode=client`;
+        const message = `Hi ${smsInfo.name}, it was great meeting you! You can use this secure link to quickly provide the details for your insurance quotes: ${link}`;
+        
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const sep = isIOS ? '&' : '?';
+        window.location.href = `sms:${smsInfo.phone}${sep}body=${encodeURIComponent(message)}`;
+      };
+
       // --- Utils ---
       const toggleCategory = (id) => {
         setSelectedCats(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
@@ -242,9 +304,18 @@
       const generateSummaryText = () => {
         let text = `=== QUICK QUOTE INTAKE ===\n`;
         text += `Categories: ${selectedCats.map(id => CATEGORIES.find(c => c.id === id)?.label).join(', ')}\n\n`;
-        text += `[NAMED INSUREDS]\n1: ${insured.first1} ${insured.last1} | DOB: ${insured.dob1} | DL: ${insured.dl1} (${insured.dlState1})\n`;
-        if (insured.first2) text += `2: ${insured.first2} ${insured.last2} | DOB: ${insured.dob2} | DL: ${insured.dl2} (${insured.dlState2})\n`;
+
+        if (selectedCats.includes('inspection')) {
+          text += `[INSPECTION CLIENT INFO]\nLoc Purchased: ${inspection.location} | Current Addr: ${inspection.currentAddress}\nClosing Date: ${inspection.closingDate} | Purchase Price: $${inspection.price}\nRoof Age: ${inspection.roofAge} | Mortgage: ${inspection.mortgage}\n\n`;
+        }
+
+        text += `[NAMED INSUREDS]\n1: ${insured.first1} ${insured.last1} | DOB: ${insured.dob1} | DL: ${insured.dl1} (${insured.dlState1}) | SSN: ${insured.ssn1}\n`;
+        if (insured.first2) text += `2: ${insured.first2} ${insured.last2} | DOB: ${insured.dob2} | DL: ${insured.dl2} (${insured.dlState2}) | SSN: ${insured.ssn2}\n`;
         text += `Phone: ${insured.phone1} | Email: ${insured.email1}\nAddress: ${insured.address}\n\n`;
+
+        if (selectedCats.includes('inspection') && inspection.autoBundle === 'Yes') {
+          text += `[INSPECTION AUTO BUNDLE]\nRequested Auto Bundle: YES\n`;
+        }
 
         if (drivers.length > 0) {
           text += `[ADDITIONAL DRIVERS]\n`;
@@ -252,7 +323,7 @@
           text += `\n`;
         }
 
-        if (selectedCats.includes('auto') && vehicles.length > 0) {
+        if ((selectedCats.includes('auto') || (selectedCats.includes('inspection') && inspection.autoBundle === 'Yes')) && vehicles.length > 0) {
           text += `[PERSONAL AUTO]\n`;
           vehicles.forEach(v => text += `${v.year} ${v.make} ${v.model} | VIN: ${v.vin} | Cov: ${v.coverage} ${v.coverage === 'Full Coverage' ? `(Ded: ${v.deductible})` : ''}\n`);
           text += `\n`;
@@ -284,7 +355,7 @@
 
         if (selectedCats.includes('home') || (selectedCats.includes('farm') && !farmNoDwelling)) {
           text += `[HOME/DWELLING DETAILS]\nStyle: ${home.style === 'Other' ? home.styleOther : home.style} | Siding: ${home.siding} | Roof: ${home.roofMaterial === 'Other' ? home.roofMaterialOther : home.roofMaterial}\n`;
-          text += `SqFt: ${home.sqft} | Rep Cost: $${home.replacementCost} | Year Built: ${home.age} | Bsmt: ${home.basement} (Finished: ${home.finishedBasement})\n`;
+          text += `SqFt: ${home.sqft} | Rep Cost: $${home.replacementCost} | Year Built: ${home.age} | Mortgage: ${home.mortgage} | Bsmt: ${home.basement} (Finished: ${home.finishedBasement})\n`;
           text += `Wood Stove: ${home.woodStove} | Detached: ${home.detached} (${home.detachedDesc})\n`;
           text += `Updates -> Elec: ${home.updateElec}, Plumb: ${home.updatePlumb}, HVAC: ${home.updateHvac}, Roof: ${home.updateRoof}\n`;
           if (home.notes) text += `Dwelling Notes: ${home.notes}\n`;
@@ -328,8 +399,13 @@
         let folderName = `${insured.last1}, ${insured.first1}${insured.first2 ? ' & ' + insured.first2 : ''}`;
         const subject = encodeURIComponent(`[QuickQuote] ${folderName}`);
         const body = encodeURIComponent(generateSummaryText());
+        
+        // Secure Privacy Feature: Strip CC if in client mode
+        const ccString = !isClientMode ? `&cc=${CSR_EMAIL}` : '';
+        const mailtoLink = `mailto:${AUTOMATION_EMAIL}?subject=${subject}&body=${body}${ccString}`;
+        
         const link = document.createElement('a');
-        link.href = `mailto:${AUTOMATION_EMAIL}?cc=${CSR_EMAIL}&subject=${subject}&body=${body}`;
+        link.href = mailtoLink;
         link.target = '_top'; 
         link.click();
         setShowSummary(false);
@@ -430,6 +506,18 @@
                 >
                   START DATA COLLECTION
                 </button>
+
+                {/* SMS Link Feature */}
+                <div className="mt-10 border-t pt-8">
+                  <h3 className="text-lg font-bold text-black mb-2 flex items-center gap-2"><MessageCircle className="w-5 h-5 text-[#D4AF37]"/> Text Link to Client</h3>
+                  <p className="text-sm text-gray-500 mb-4">Send a secure link so they can fill out the fast Inspection form on their phone.</p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input placeholder="Client Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none flex-grow" value={smsInfo.name} onChange={e => setSmsInfo({...smsInfo, name: e.target.value})} />
+                    <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none flex-grow" value={smsInfo.phone} onChange={e => setSmsInfo({...smsInfo, phone: e.target.value})} />
+                    <button onClick={handleSendSms} className="bg-[#D4AF37] text-black font-bold px-6 py-3 rounded hover:bg-[#b5952f] transition-colors whitespace-nowrap">Send SMS</button>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -449,11 +537,11 @@
 
           <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden border border-slate-200 mb-20">
             <div className="bg-black border-t-4 border-[#D4AF37] text-white p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center gap-4 cursor-pointer" onClick={() => setAppStep('selection')}>
+              <div className="flex items-center gap-4 cursor-pointer" onClick={() => !isClientMode && setAppStep('selection')}>
                 <img src="logo.jpg" alt="FUMA Logo" className="h-12 w-auto bg-white p-1 rounded" onError={e => e.target.style.display = 'none'} />
                 <div>
                   <h1 className="text-2xl font-bold">QuickQuote Pro</h1>
-                  <p className="text-gray-400 text-xs font-bold uppercase tracking-tight">Return to Menu</p>
+                  <p className="text-gray-400 text-xs font-bold uppercase tracking-tight">{isClientMode ? 'Secure Client Portal' : 'Return to Menu'}</p>
                 </div>
               </div>
               <button onClick={() => setShowSummary(true)} className="bg-[#D4AF37] hover:bg-[#b5952f] text-black px-6 py-2.5 rounded-lg font-extrabold flex items-center justify-center gap-2 shadow-md transition-colors">
@@ -463,66 +551,195 @@
 
             <div className="p-6 space-y-10">
               
-              {/* GLOBAL: Primary Address */}
-              <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
-                <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><MapPin className="w-6 h-6 text-[#D4AF37]" /> Household / Primary Address</h2>
-                <div className="relative" ref={suggestionRef}>
-                  <input placeholder="Start typing address..." className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full font-medium" value={insured.address} onChange={handleAddressChange} />
-                  {showSuggestions && addressSuggestions.length > 0 && (
-                    <ul className="absolute z-10 w-full bg-white border border-slate-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
-                      {addressSuggestions.map((item, idx) => (
-                        <li key={idx} onClick={() => handleSelectAddress(item)} className="p-3 hover:bg-yellow-50 cursor-pointer border-b last:border-b-0 text-sm text-slate-700">{item.display_name}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <div className="flex flex-col md:flex-row md:items-center gap-3 mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <span className="text-sm font-bold text-black">Quick Look-up:</span>
-                  <div className="flex gap-2">
-                    <button onClick={handleRealtorLookup} className="bg-white border border-gray-300 text-black px-3 py-1.5 rounded hover:bg-yellow-50 flex items-center justify-center gap-1 text-sm font-bold transition-colors flex-grow md:flex-grow-0"><Home className="w-4 h-4"/> Realtor.com</button>
-                  </div>
-                  <div className="flex items-center gap-2 md:ml-auto">
-                    {detectedCounty && <span className="text-xs text-slate-600 font-semibold bg-white px-2 py-1 rounded border border-gray-300">{detectedCounty} County detected</span>}
-                    <button onClick={handleCountyLookup} className="bg-black text-white px-3 py-1.5 rounded hover:bg-gray-800 flex items-center justify-center gap-1 text-sm font-bold transition-colors whitespace-nowrap"><ExternalLink className="w-4 h-4"/> Parcel Search</button>
-                  </div>
-                </div>
-              </section>
+              {/* === INSPECTION CLIENT CUSTOM FLOW === */}
+              {selectedCats.includes('inspection') && (
+                <>
+                  <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
+                    <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><Clipboard className="w-6 h-6 text-[#D4AF37]" /> Inspection Details</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input placeholder="Location Being Purchased" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-1 md:col-span-2" value={inspection.location} onChange={e => setInspection({...inspection, location: e.target.value})} />
+                      <input placeholder="Current Address (Where you most recently lived)" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-1 md:col-span-2" value={inspection.currentAddress} onChange={e => setInspection({...inspection, currentAddress: e.target.value})} />
+                      
+                      <input placeholder="Approximate Closing Date" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={inspection.closingDate} onChange={e => setInspection({...inspection, closingDate: e.target.value})} />
+                      <input placeholder="Purchase Price ($)" type="number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={inspection.price} onChange={e => setInspection({...inspection, price: e.target.value})} />
+                      
+                      <input placeholder="Age of Roof (Years)" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={inspection.roofAge} onChange={e => setInspection({...inspection, roofAge: e.target.value})} />
+                      <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
+                        <label className="text-xs text-slate-500 block font-semibold">Will there be a mortgage on property?</label>
+                        <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={inspection.mortgage} onChange={e => setInspection({...inspection, mortgage: e.target.value})}>
+                          <option value="Yes">Yes</option>
+                          <option value="No">No</option>
+                        </select>
+                      </div>
+                    </div>
+                  </section>
 
-              {/* GLOBAL: Named Insureds */}
-              <section className="bg-white p-4 rounded-lg border-l-4 border-[#D4AF37] shadow-sm border border-gray-100">
-                <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><User className="w-6 h-6 text-[#D4AF37]" /> Named Insureds</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input placeholder="Primary First" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.first1} onChange={e => setInsured({...insured, first1: e.target.value})} />
-                  <input placeholder="Primary Last" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.last1} onChange={e => setInsured({...insured, last1: e.target.value})} />
-                  <input placeholder="DOB (MMDDYYYY)" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dob1} onChange={e => setInsured({...insured, dob1: formatDOB(e.target.value)})} />
-                  <div className="flex gap-1">
-                    <input placeholder="DL Number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.dl1} onChange={e => setInsured({...insured, dl1: e.target.value})} />
-                    <select className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dlState1} onChange={e => setInsured({...insured, dlState1: e.target.value})}>
-                      {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                  </div>
-                  <input placeholder="Social Security Number" type="password" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.ssn1} onChange={e => setInsured({...insured, ssn1: e.target.value})} />
-                  <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.phone1} onChange={e => setInsured({...insured, phone1: e.target.value})} />
-                  <input placeholder="Email Address" type="email" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.email1} onChange={e => setInsured({...insured, email1: e.target.value})} />
-                  
-                  <div className="md:col-span-2 border-t mt-2 pt-4"><p className="text-xs font-bold text-gray-400 uppercase">2nd Named Insured (Optional)</p></div>
-                  <input placeholder="First Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.first2} onChange={e => setInsured({...insured, first2: e.target.value})} />
-                  <input placeholder="Last Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.last2} onChange={e => setInsured({...insured, last2: e.target.value})} />
-                  <input placeholder="DOB (MMDDYYYY)" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dob2} onChange={e => setInsured({...insured, dob2: formatDOB(e.target.value)})} />
-                  <div className="flex gap-1">
-                    <input placeholder="DL Number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.dl2} onChange={e => setInsured({...insured, dl2: e.target.value})} />
-                    <select className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dlState2} onChange={e => setInsured({...insured, dlState2: e.target.value})}>
-                      {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                  </div>
-                  <input placeholder="Social Security Number" type="password" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.ssn2} onChange={e => setInsured({...insured, ssn2: e.target.value})} />
-                  <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.phone2} onChange={e => setInsured({...insured, phone2: e.target.value})} />
-                  <input placeholder="Email Address" type="email" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.email2} onChange={e => setInsured({...insured, email2: e.target.value})} />
-                </div>
-              </section>
+                  <section className="bg-white p-4 rounded-lg border-l-4 border-[#D4AF37] shadow-sm border border-gray-100">
+                    <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><User className="w-6 h-6 text-[#D4AF37]" /> Insured Details</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input placeholder="Primary First Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.first1} onChange={e => setInsured({...insured, first1: e.target.value})} />
+                      <input placeholder="Primary Last Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.last1} onChange={e => setInsured({...insured, last1: e.target.value})} />
+                      <input placeholder="DOB (MMDDYYYY)" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dob1} onChange={e => setInsured({...insured, dob1: formatDOB(e.target.value)})} />
+                      <div className="relative group">
+                        <input placeholder="Social Security Number" type="password" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.ssn1} onChange={e => setInsured({...insured, ssn1: e.target.value})} />
+                        <p className="text-[10px] text-gray-500 mt-1 font-bold">Not required, but may improve rates via insurance score.</p>
+                      </div>
+                      
+                      <div className="md:col-span-2 border-t mt-2 pt-4"><p className="text-xs font-bold text-gray-400 uppercase">2nd Named Insured (Optional)</p></div>
+                      <input placeholder="2nd Insured First Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.first2} onChange={e => setInsured({...insured, first2: e.target.value})} />
+                      <input placeholder="2nd Insured Last Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.last2} onChange={e => setInsured({...insured, last2: e.target.value})} />
+                      <input placeholder="DOB (MMDDYYYY)" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dob2} onChange={e => setInsured({...insured, dob2: formatDOB(e.target.value)})} />
+                      <div className="relative group">
+                        <input placeholder="Social Security Number" type="password" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.ssn2} onChange={e => setInsured({...insured, ssn2: e.target.value})} />
+                        <p className="text-[10px] text-gray-500 mt-1 font-bold">Not required, but may improve rates via insurance score.</p>
+                      </div>
 
-              {/* SHARED: DRIVERS SECTION (Auto, Cycle, Camper, CommAuto, WC) */}
-              {['auto', 'cycle', 'camper', 'commauto', 'wc'].some(c => selectedCats.includes(c)) && (
+                      <div className="md:col-span-2 border-t mt-2 pt-4 flex gap-4">
+                        <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.phone1} onChange={e => setInsured({...insured, phone1: e.target.value})} />
+                        <input placeholder="Email Address" type="email" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.email1} onChange={e => setInsured({...insured, email1: e.target.value})} />
+                      </div>
+                    </div>
+                  </section>
+
+                  <section className="bg-white p-4 rounded-lg border-l-4 border-gray-400 shadow-sm border border-gray-100">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-xl font-bold flex items-center gap-2 text-black"><Car className="w-6 h-6 text-[#D4AF37]" /> Auto Bundle?</h2>
+                      <div className="flex items-center gap-4 bg-gray-100 p-1.5 rounded-lg border border-gray-300">
+                        <label className={`px-4 py-1.5 rounded cursor-pointer font-bold ${inspection.autoBundle === 'Yes' ? 'bg-[#D4AF37] text-black shadow' : 'text-gray-500 hover:text-black'}`}>
+                          <input type="radio" name="bundle" className="hidden" checked={inspection.autoBundle === 'Yes'} onChange={() => setInspection({...inspection, autoBundle: 'Yes'})} /> Yes
+                        </label>
+                        <label className={`px-4 py-1.5 rounded cursor-pointer font-bold ${inspection.autoBundle === 'No' ? 'bg-black text-white shadow' : 'text-gray-500 hover:text-black'}`}>
+                          <input type="radio" name="bundle" className="hidden" checked={inspection.autoBundle === 'No'} onChange={() => setInspection({...inspection, autoBundle: 'No'})} /> No
+                        </label>
+                      </div>
+                    </div>
+
+                    {inspection.autoBundle === 'Yes' && (
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h3 className="font-bold text-gray-700 mb-3 flex justify-between items-center">
+                          Driver Licenses
+                          <button onClick={addDriver} className="text-xs bg-gray-100 border border-gray-300 px-3 py-1.5 rounded-full hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all text-black">+ Add Driver</button>
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                          <div className="bg-gray-50 p-3 rounded border">
+                            <label className="text-xs font-bold text-gray-500 block mb-1 uppercase">DL For: {insured.first1 || 'Primary'} {insured.last1}</label>
+                            <div className="flex gap-1">
+                              <input placeholder="DL Number" className="border p-2 rounded w-full focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dl1} onChange={e => setInsured({...insured, dl1: e.target.value})} />
+                              <select className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dlState1} onChange={e => setInsured({...insured, dlState1: e.target.value})}>{STATES.map(s => <option key={s} value={s}>{s}</option>)}</select>
+                            </div>
+                          </div>
+                          {insured.first2 && (
+                            <div className="bg-gray-50 p-3 rounded border">
+                              <label className="text-xs font-bold text-gray-500 block mb-1 uppercase">DL For: {insured.first2} {insured.last2}</label>
+                              <div className="flex gap-1">
+                                <input placeholder="DL Number" className="border p-2 rounded w-full focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dl2} onChange={e => setInsured({...insured, dl2: e.target.value})} />
+                                <select className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dlState2} onChange={e => setInsured({...insured, dlState2: e.target.value})}>{STATES.map(s => <option key={s} value={s}>{s}</option>)}</select>
+                              </div>
+                            </div>
+                          )}
+                          {drivers.map((d, i) => (
+                            <div key={i} className="bg-yellow-50 p-3 rounded border border-[#D4AF37]/50 col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-4 gap-2 relative">
+                              <button onClick={() => removeDriver(i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-4 h-4"/></button>
+                              <input placeholder="First Name" className="border p-2 rounded" value={d.first} onChange={e => updateDriver(i, 'first', e.target.value)} />
+                              <input placeholder="Last Name" className="border p-2 rounded" value={d.last} onChange={e => updateDriver(i, 'last', e.target.value)} />
+                              <input placeholder="DOB" className="border p-2 rounded" value={d.dob} onChange={e => updateDriver(i, 'dob', formatDOB(e.target.value))} />
+                              <div className="flex gap-1">
+                                <input placeholder="DL Number" className="border p-2 rounded w-full" value={d.dl} onChange={e => updateDriver(i, 'dl', e.target.value)} />
+                                <select className="border p-2 rounded" value={d.dlState} onChange={e => updateDriver(i, 'dlState', e.target.value)}>{STATES.map(s => <option key={s} value={s}>{s}</option>)}</select>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <h3 className="font-bold text-gray-700 mb-3 flex justify-between items-center">
+                          Vehicles
+                          <button onClick={() => addVehicle(setVehicles, vehicles)} className="text-xs bg-gray-100 border border-gray-300 px-3 py-1.5 rounded-full hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all text-black">+ Add Vehicle</button>
+                        </h3>
+                        {vehicles.map((v, i) => (
+                          <div key={i} className="bg-gray-50 p-4 rounded-lg mb-4 relative border border-gray-200">
+                            {i > 0 && <button onClick={() => removeListItem(setVehicles, vehicles, i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-5 h-5"/></button>}
+                            {renderVehicleFields(v, i, setVehicles, vehicles, false)}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </section>
+                </>
+              )}
+
+
+              {/* === STANDARD FLOW LOGIC === */}
+              {/* Only show these if Inspection is NOT the only selected item */}
+              {!selectedCats.includes('inspection') && (
+                <>
+                  {/* GLOBAL: Primary Address */}
+                  <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
+                    <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><MapPin className="w-6 h-6 text-[#D4AF37]" /> Household / Primary Address</h2>
+                    <div className="relative" ref={suggestionRef}>
+                      <input placeholder="Start typing address..." className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full font-medium" value={insured.address} onChange={handleAddressChange} />
+                      {showSuggestions && addressSuggestions.length > 0 && (
+                        <ul className="absolute z-10 w-full bg-white border border-slate-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                          {addressSuggestions.map((item, idx) => (
+                            <li key={idx} onClick={() => handleSelectAddress(item)} className="p-3 hover:bg-yellow-50 cursor-pointer border-b last:border-b-0 text-sm text-slate-700">{item.display_name}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    <div className="flex flex-col md:flex-row md:items-center gap-3 mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <span className="text-sm font-bold text-black">Quick Look-up:</span>
+                      <div className="flex gap-2">
+                        <button onClick={handleRealtorLookup} className="bg-white border border-gray-300 text-black px-3 py-1.5 rounded hover:bg-yellow-50 flex items-center justify-center gap-1 text-sm font-bold transition-colors flex-grow md:flex-grow-0"><Home className="w-4 h-4"/> Realtor.com</button>
+                      </div>
+                      <div className="flex items-center gap-2 md:ml-auto">
+                        {detectedCounty && <span className="text-xs text-slate-600 font-semibold bg-white px-2 py-1 rounded border border-gray-300">{detectedCounty} County detected</span>}
+                        <button onClick={handleCountyLookup} className="bg-black text-white px-3 py-1.5 rounded hover:bg-gray-800 flex items-center justify-center gap-1 text-sm font-bold transition-colors whitespace-nowrap"><ExternalLink className="w-4 h-4"/> Parcel Search</button>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* GLOBAL: Named Insureds */}
+                  <section className="bg-white p-4 rounded-lg border-l-4 border-[#D4AF37] shadow-sm border border-gray-100">
+                    <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><User className="w-6 h-6 text-[#D4AF37]" /> Named Insureds</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input placeholder="Primary First" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.first1} onChange={e => setInsured({...insured, first1: e.target.value})} />
+                      <input placeholder="Primary Last" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.last1} onChange={e => setInsured({...insured, last1: e.target.value})} />
+                      <input placeholder="DOB (MMDDYYYY)" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dob1} onChange={e => setInsured({...insured, dob1: formatDOB(e.target.value)})} />
+                      <div className="flex gap-1">
+                        <input placeholder="DL Number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.dl1} onChange={e => setInsured({...insured, dl1: e.target.value})} />
+                        <select className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dlState1} onChange={e => setInsured({...insured, dlState1: e.target.value})}>
+                          {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </div>
+                      <div className="relative group">
+                        <input placeholder="Social Security Number" type="password" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.ssn1} onChange={e => setInsured({...insured, ssn1: e.target.value})} />
+                        <p className="text-[10px] text-gray-500 mt-1 font-bold">Not required, but may improve rates via insurance score.</p>
+                      </div>
+                      <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.phone1} onChange={e => setInsured({...insured, phone1: e.target.value})} />
+                      <input placeholder="Email Address" type="email" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.email1} onChange={e => setInsured({...insured, email1: e.target.value})} />
+                      
+                      <div className="md:col-span-2 border-t mt-2 pt-4"><p className="text-xs font-bold text-gray-400 uppercase">2nd Named Insured (Optional)</p></div>
+                      <input placeholder="First Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.first2} onChange={e => setInsured({...insured, first2: e.target.value})} />
+                      <input placeholder="Last Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.last2} onChange={e => setInsured({...insured, last2: e.target.value})} />
+                      <input placeholder="DOB (MMDDYYYY)" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dob2} onChange={e => setInsured({...insured, dob2: formatDOB(e.target.value)})} />
+                      <div className="flex gap-1">
+                        <input placeholder="DL Number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.dl2} onChange={e => setInsured({...insured, dl2: e.target.value})} />
+                        <select className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dlState2} onChange={e => setInsured({...insured, dlState2: e.target.value})}>
+                          {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </div>
+                      <div className="relative group">
+                        <input placeholder="Social Security Number" type="password" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.ssn2} onChange={e => setInsured({...insured, ssn2: e.target.value})} />
+                        <p className="text-[10px] text-gray-500 mt-1 font-bold">Not required, but may improve rates via insurance score.</p>
+                      </div>
+                      <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.phone2} onChange={e => setInsured({...insured, phone2: e.target.value})} />
+                      <input placeholder="Email Address" type="email" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.email2} onChange={e => setInsured({...insured, email2: e.target.value})} />
+                    </div>
+                  </section>
+                </>
+              )}
+
+              {/* SHARED: DRIVERS SECTION (Auto, Cycle, Camper, CommAuto, WC) - Show if not already shown in bundle */}
+              {['auto', 'cycle', 'camper', 'commauto', 'wc'].some(c => selectedCats.includes(c)) && !selectedCats.includes('inspection') && (
                 <section className="bg-white p-4 rounded-lg border-l-4 border-gray-400 shadow-sm border border-gray-100">
                   <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
                     <span className="flex items-center gap-2"><Users className="w-6 h-6 text-[#D4AF37]" /> Additional Drivers</span>
@@ -567,7 +784,36 @@
                     <input placeholder="Year Started" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={business.yearStarted} onChange={e => setBusiness({...business, yearStarted: e.target.value})} />
                     
                     <textarea placeholder="Description of Operations / Nature of Business" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-2 h-20" value={business.operations} onChange={e => setBusiness({...business, operations: e.target.value})} />
-                    <input placeholder="Class Code (If known)" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-2" value={business.classCode} onChange={e => setBusiness({...business, classCode: e.target.value})} />
+                    
+                    {/* NAICS AUTOCOMPLETE */}
+                    <div className="col-span-2 relative" ref={naicsRef}>
+                      <input 
+                        placeholder="Search Class Code or Description (e.g. Plumb, 238220)" 
+                        className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" 
+                        value={naicsSearch || business.classCode} 
+                        onChange={e => {
+                          setNaicsSearch(e.target.value);
+                          setBusiness({...business, classCode: e.target.value});
+                          setShowNaicsList(true);
+                        }}
+                        onFocus={() => setShowNaicsList(true)}
+                      />
+                      {showNaicsList && naicsSearch && (
+                        <ul className="absolute z-20 w-full bg-white border border-gray-200 mt-1 rounded-lg shadow-2xl max-h-60 overflow-y-auto">
+                          {NAICS_CODES.filter(n => n.code.includes(naicsSearch) || n.desc.toLowerCase().includes(naicsSearch.toLowerCase())).map((n, idx) => (
+                            <li key={idx} onClick={() => {
+                              setBusiness({...business, classCode: `${n.code} - ${n.desc}`});
+                              setNaicsSearch('');
+                              setShowNaicsList(false);
+                            }} className="p-3 hover:bg-yellow-50 cursor-pointer border-b last:border-b-0 text-sm text-black flex justify-between">
+                              <span className="font-bold text-[#D4AF37] mr-4">{n.code}</span>
+                              <span className="text-right flex-grow">{n.desc}</span>
+                            </li>
+                          ))}
+                          <li className="p-2 bg-gray-100 text-xs text-center text-gray-500 italic">If code not listed, type manually.</li>
+                        </ul>
+                      )}
+                    </div>
 
                     <input placeholder="Est. Annual Income" type="number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={business.income} onChange={e => setBusiness({...business, income: e.target.value})} />
                     <input placeholder="Est. Annual Payroll" type="number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={business.payroll} onChange={e => setBusiness({...business, payroll: e.target.value})} />
@@ -680,6 +926,11 @@
                       <input placeholder="Year Built / Age" inputMode="numeric" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.age} onChange={e => setHome({...home, age: e.target.value})} />
                       
                       <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
+                        <label className="text-xs text-slate-500 block font-semibold">Mortgage on Property?</label>
+                        <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={home.mortgage} onChange={e => setHome({...home, mortgage: e.target.value})}><option>Yes</option><option>No</option></select>
+                      </div>
+
+                      <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
                         <label className="text-xs text-slate-500 block font-semibold">Basement?</label>
                         <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={home.basement} onChange={e => setHome({...home, basement: e.target.value})}><option>No</option><option>Yes</option></select>
                       </div>
@@ -782,7 +1033,7 @@
               )}
 
               {/* PERSONAL AUTO */}
-              {selectedCats.includes('auto') && (
+              {selectedCats.includes('auto') && !selectedCats.includes('inspection') && (
                 <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
                   <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
                     <span className="flex items-center gap-2"><Car className="w-6 h-6 text-[#D4AF37]" /> Personal Auto Vehicles</span>
@@ -934,6 +1185,21 @@
                 </section>
               )}
 
+              {/* LIFE INSURANCE */}
+              {selectedCats.includes('life') && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-[#D4AF37] shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><LifeBuoy className="w-6 h-6 text-[#D4AF37]" /> Life Insurance Interest</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input placeholder="Target Coverage Amount" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={life.amount} onChange={e => setLife({...life, amount: e.target.value})} />
+                    <select className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={life.term} onChange={e => setLife({...life, term: e.target.value})}>
+                      <option value="">Desired Product...</option>
+                      <option>10-Year Term</option><option>20-Year Term</option><option>30-Year Term</option><option>Whole Life</option><option>Final Expense</option>
+                    </select>
+                    <textarea placeholder="General health history or tobacco use notes..." className="border p-3 rounded bg-gray-50 md:col-span-2 h-20 focus:ring-2 ring-[#D4AF37] outline-none" value={life.healthNotes} onChange={e => setLife({...life, healthNotes: e.target.value})} />
+                  </div>
+                </section>
+              )}
+
               {/* NOTES & BOTTOM ADDITIONS */}
               <section className="bg-gray-100 p-6 rounded-xl border border-gray-300">
                 <h2 className="text-lg font-bold mb-4 text-black uppercase tracking-tight">Overall Notes & Additional Lines</h2>
@@ -944,19 +1210,23 @@
                   onChange={e => setOverallNotes(e.target.value)} 
                 />
                 
-                <p className="text-sm font-bold text-gray-500 mb-3 uppercase">Add another Line of Business to this quote:</p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2">
-                  {CATEGORIES.filter(c => !selectedCats.includes(c.id)).map(cat => (
-                    <button 
-                      key={cat.id} 
-                      onClick={() => toggleCategory(cat.id)}
-                      className="flex flex-col items-center gap-1 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#D4AF37] hover:shadow-md transition-all text-[10px] font-bold text-gray-700 uppercase"
-                    >
-                      <cat.icon className="w-5 h-5 text-gray-400" />
-                      {cat.label}
-                    </button>
-                  ))}
-                </div>
+                {!isClientMode && (
+                  <>
+                    <p className="text-sm font-bold text-gray-500 mb-3 uppercase">Add another Line of Business to this quote:</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2">
+                      {CATEGORIES.filter(c => !selectedCats.includes(c.id)).map(cat => (
+                        <button 
+                          key={cat.id} 
+                          onClick={() => toggleCategory(cat.id)}
+                          className="flex flex-col items-center gap-1 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#D4AF37] hover:shadow-md transition-all text-[10px] font-bold text-gray-700 uppercase"
+                        >
+                          <cat.icon className="w-5 h-5 text-gray-400" />
+                          {cat.label}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
               </section>
             </div>
           </div>
@@ -976,7 +1246,7 @@
                 </div>
                 <div className="p-4 border-t bg-gray-50 rounded-b-xl flex flex-col md:flex-row justify-end gap-3">
                   <button onClick={() => setAlertMsg('Copying logic running... Check your clipboard.')} className="px-4 py-2 text-black bg-white font-bold hover:bg-yellow-50 rounded border border-gray-300 md:mr-auto transition-colors">Copy Summary</button>
-                  <button onClick={() => setShowSummary(false)} className="px-4 py-2 text-slate-600 font-bold hover:bg-slate-200 rounded transition-colors">Go Back</button>
+                  <button onClick={() => setShowSummary(false)} className="px-4 py-2 text-slate-600 font-bold hover:bg-slate-200 rounded transition-colors">Edit Data</button>
                   <button onClick={sendViaEmail} className="bg-[#D4AF37] hover:bg-[#C5A017] text-black px-6 py-2 rounded font-extrabold flex items-center justify-center gap-2 shadow-md transition-colors">
                     <Mail className="w-5 h-5"/> Send via Email
                   </button>
