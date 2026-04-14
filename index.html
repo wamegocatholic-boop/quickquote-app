@@ -35,30 +35,72 @@
     const Car = (p) => <Icon {...p}><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a2 2 0 0 0-1.6-.8H9.3a2 2 0 0 0-1.6.8L5 11l-5.16.86a1 1 0 0 0-.84.99V16h3m14 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM7 16a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/></Icon>;
     const Search = (p) => <Icon {...p}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></Icon>;
     const FileText = (p) => <Icon {...p}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></Icon>;
-    const Copy = (p) => <Icon {...p}><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></Icon>;
     const Mail = (p) => <Icon {...p}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></Icon>;
+    const Bike = (p) => <Icon {...p}><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></Icon>;
+    const Briefcase = (p) => <Icon {...p}><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></Icon>;
+    const HardHat = (p) => <Icon {...p}><path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a5.9 5.9 0 0 0-5-5.9V7a3 3 0 0 0-6 0v3.1A5.9 5.9 0 0 0 2 16z"/><line x1="12" y1="10" x2="12" y2="13"/></Icon>;
+    const Truck = (p) => <Icon {...p}><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></Icon>;
+    const Tractor = (p) => <Icon {...p}><circle cx="18" cy="18" r="3"/><circle cx="6" cy="18" r="2"/><path d="M3 17h3l1-4h11l1 4h2V9a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H3z"/><line x1="11" y1="7" x2="11" y2="11"/></Icon>;
+    const LifeBuoy = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></Icon>;
+    const Anchor = (p) => <Icon {...p}><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><line x1="5" y1="12" x2="19" y2="12"/><path d="M2 15s1.5 2 3 2 3-2 3-2 1.5 2 3 2 3-2 3-2 1.5 2 3 2 3-2 3-2"/></Icon>;
+
+    const STATES = ["AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"];
+    const DEDUCTIBLES = ["$250", "$500", "$750", "$1000", "$1500", "$2000", "$2500"];
+
+    const CATEGORIES = [
+      { id: 'home', label: 'Homeowners', icon: Home },
+      { id: 'auto', label: 'Auto', icon: Car },
+      { id: 'cycle', label: 'Motorcycle/ATV', icon: Bike },
+      { id: 'camper', label: 'Camper', icon: Truck },
+      { id: 'watercraft', label: 'Watercraft', icon: Anchor },
+      { id: 'life', label: 'Life Insurance', icon: LifeBuoy },
+      { id: 'bop', label: 'BOP/Package', icon: Briefcase },
+      { id: 'wc', label: 'Work Comp', icon: HardHat },
+      { id: 'commauto', label: 'Commercial Auto', icon: Truck },
+      { id: 'farm', label: 'Farmowners', icon: Tractor },
+    ];
 
     // !!! CONFIGURE YOUR EMAILS HERE !!!
     const AUTOMATION_EMAIL = "zteske@fumainsurance.com"; 
     const CSR_EMAIL = "office.ks@fumainsurance.com";
 
     const App = () => {
+      const [appStep, setAppStep] = useState('selection'); // 'selection' or 'entry'
+      const [selectedCats, setSelectedCats] = useState([]);
+      
       const [insured, setInsured] = useState({
-        first1: '', last1: '', ssn1: '', dob1: '', dl1: '', phone1: '', email1: '', address: '',
-        first2: '', last2: '', ssn2: '', dob2: '', dl2: '', phone2: '', email2: ''
+        first1: '', last1: '', ssn1: '', dob1: '', dl1: '', dlState1: 'KS', phone1: '', email1: '', address: '',
+        first2: '', last2: '', ssn2: '', dob2: '', dl2: '', dlState2: 'KS', phone2: '', email2: ''
       });
+      
       const [drivers, setDrivers] = useState([]);
-      const [vehicles, setVehicles] = useState([{ vin: '', year: '', make: '', model: '', coverage: 'Liability' }]);
-      const [priorIns, setPriorIns] = useState({ company: '', premium: '' });
+      const [vehicles, setVehicles] = useState([{ vin: '', year: '', make: '', model: '', coverage: 'Liability Only', deductible: '' }]);
+      const [cycleVehicles, setCycleVehicles] = useState([]);
+      const [camperVehicles, setCamperVehicles] = useState([]);
+      const [watercraft, setWatercraft] = useState([]);
+      const [commAutoVehicles, setCommAutoVehicles] = useState([]);
+      
+      // Farm State
+      const [farmNoDwelling, setFarmNoDwelling] = useState(false);
+      const [farmLocations, setFarmLocations] = useState([]);
+      const [farmOutbuildings, setFarmOutbuildings] = useState([]);
+      const [farmProperty, setFarmProperty] = useState([]);
+
       const [home, setHome] = useState({
-        address: '', sqft: '', replacementCost: '', basement: 'No', finishedBasement: 'No',
+        address: '', sqft: '', replacementCost: '', style: '', styleOther: '', basement: 'No', finishedBasement: 'No',
         woodStove: 'No', detached: 'No', detachedDesc: '', age: '', siding: '',
         updateElec: '', updatePlumb: '', updateHvac: '', updateRoof: '', roofMaterial: '', roofMaterialOther: '', notes: ''
       });
-      const [crossSell, setCrossSell] = useState({ termLife: '', powersports: '' });
+
+      const [business, setBusiness] = useState({
+        name: '', entity: '', fein: '', yearStarted: '', address: '', operations: '', employeesFt: '', employeesPt: '', payroll: '', income: '', classCode: '', losses: '', carrier: '', premium: '', renewalDate: ''
+      });
+      const [wcCodes, setWcCodes] = useState([]);
+
+      const [life, setLife] = useState({ amount: '', term: '', healthNotes: '' });
       const [overallNotes, setOverallNotes] = useState('');
       const [showSummary, setShowSummary] = useState(false);
-      const [alertMsg, setAlertMsg] = useState(''); // Custom Message Box State
+      const [alertMsg, setAlertMsg] = useState('');
 
       const [addressSuggestions, setAddressSuggestions] = useState([]);
       const [showSuggestions, setShowSuggestions] = useState(false);
@@ -66,78 +108,9 @@
       const [addressQuery, setAddressQuery] = useState(''); 
       const suggestionRef = useRef(null);
 
-      // --- Mobile Keyboard & Navigation Optimization ---
-      useEffect(() => {
-        const inputs = document.querySelectorAll('input, select');
-        inputs.forEach(input => input.setAttribute('enterkeyhint', 'next'));
-      });
-
-      useEffect(() => {
-        const handleClickOutside = (event) => {
-          if (suggestionRef.current && !suggestionRef.current.contains(event.target)) setShowSuggestions(false);
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-      }, []);
-
-      useEffect(() => {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(async () => {
-          if (addressQuery.length > 5) {
-            try {
-              const kansasViewBox = "-102.05,40.00,-94.58,36.99";
-              const url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=us&addressdetails=1&viewbox=${kansasViewBox}&bounded=1&email=ks.insurance.app.test@gmail.com&q=${encodeURIComponent(addressQuery)}`;
-              const response = await fetch(url, { signal: controller.signal });
-              if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-              const data = await response.json();
-              setAddressSuggestions(data);
-              setShowSuggestions(true);
-            } catch (error) {
-              if (error.name !== 'AbortError') console.error("Error fetching address:", error);
-            }
-          } else {
-            setShowSuggestions(false);
-          }
-        }, 800);
-        return () => { clearTimeout(timeoutId); controller.abort(); };
-      }, [addressQuery]);
-
-      const handleAddressChange = (e) => {
-        const query = e.target.value;
-        setInsured({ ...insured, address: query });
-        setAddressQuery(query);
-      };
-
-      const handleSelectAddress = (item) => {
-        setInsured({ ...insured, address: item.display_name });
-        setShowSuggestions(false);
-        setHome({ ...home, address: item.display_name });
-        if (item.address && item.address.county) {
-          setDetectedCounty(item.address.county.replace(' County', '').trim());
-        } else {
-          setDetectedCounty('');
-        }
-      };
-
-      const handleRealtorLookup = () => {
-        if (!insured.address) return setAlertMsg("Please enter an address first.");
-        window.open(`https://www.realtor.com/realestateandhomes-search/${encodeURIComponent(insured.address)}`, '_blank');
-      };
-
-      const handleCountyLookup = () => {
-        if (!insured.address) return setAlertMsg("Please enter an address first.");
-        let countyUrl = "";
-        if (detectedCounty === "Riley") countyUrl = `http://www.riley.kansasgov.com/parcel/`; 
-        else if (detectedCounty === "Pottawatomie") countyUrl = `https://pottawatomie.kansasgov.com/parcel/`;
-        else if (detectedCounty === "Marshall") countyUrl = `http://www.marshall.kansasgov.com/parcel/`;
-        else if (detectedCounty === "Nemaha") countyUrl = `http://ks-nemaha.manatron.com/`;
-        else if (detectedCounty === "Wabaunsee") countyUrl = `https://ks1052.cichosting.com/webportal/Login.aspx`;
-        else if (detectedCounty === "Jackson") countyUrl = `https://jackson.kansasgov.com/parcel/`;
-        else {
-          const searchTerms = detectedCounty ? `${detectedCounty} county KS property search` : "county property search";
-          countyUrl = `https://www.google.com/search?q=${encodeURIComponent(insured.address + " " + searchTerms)}`;
-        }
-        window.open(countyUrl, '_blank');
+      // --- Utils ---
+      const toggleCategory = (id) => {
+        setSelectedCats(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
       };
 
       const formatDOB = (value) => {
@@ -147,7 +120,8 @@
         return v;
       };
 
-      const addDriver = () => setDrivers([...drivers, { first: '', last: '', dob: '', dl: '', phone: '' }]);
+      // --- Handlers ---
+      const addDriver = () => setDrivers([...drivers, { first: '', last: '', dob: '', dl: '', dlState: 'KS', phone: '' }]);
       const removeDriver = (index) => setDrivers(drivers.filter((_, i) => i !== index));
       const updateDriver = (index, field, value) => {
         const newDrivers = [...drivers];
@@ -155,101 +129,130 @@
         setDrivers(newDrivers);
       };
 
-      const addVehicle = () => setVehicles([...vehicles, { vin: '', year: '', make: '', model: '', coverage: 'Liability' }]);
-      const removeVehicle = (index) => setVehicles(vehicles.filter((_, i) => i !== index));
-      const updateVehicle = (index, field, value) => {
-        const newVehicles = [...vehicles];
-        newVehicles[index][field] = value;
-        setVehicles(newVehicles);
+      const addListItem = (setter, list, template) => setter([...list, template]);
+      const removeListItem = (setter, list, index) => setter(list.filter((_, i) => i !== index));
+      const updateListItem = (setter, list, index, field, value) => {
+        const newList = [...list];
+        newList[index][field] = value;
+        setter(newList);
       };
-
-      const decodeVin = async (index, vin) => {
+      
+      const decodeVin = async (vin, callback) => {
         if (vin.length !== 17) return setAlertMsg("Please enter a valid 17-character VIN.");
         try {
           const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${vin}?format=json`);
           const data = await response.json();
           if (data.Results && data.Results.length > 0) {
-            const result = data.Results[0];
-            const newVehicles = [...vehicles];
-            newVehicles[index].year = result.ModelYear || '';
-            newVehicles[index].make = result.Make || '';
-            newVehicles[index].model = result.Model || '';
-            setVehicles(newVehicles);
+            const r = data.Results[0];
+            callback({ year: r.ModelYear || '', make: r.Make || '', model: r.Model || '' });
           }
-        } catch (error) {
-          console.error("Error decoding VIN:", error);
-          setAlertMsg("Could not decode VIN. Please enter manually.");
-        }
+        } catch (e) { setAlertMsg("Could not decode VIN. Enter manually."); }
       };
 
-      const handleMvrLookup = (dlNumber) => {
-        if (!dlNumber) return setAlertMsg("Please enter a Driver's License number first.");
-        
-        // Execute copy to clipboard safely
-        if (navigator && navigator.clipboard) {
-            navigator.clipboard.writeText(dlNumber).catch(e => console.error("Clipboard copy failed", e));
-        } else {
-            // Fallback for iFrame environments
-            const textArea = document.createElement("textarea");
-            textArea.value = dlNumber;
-            document.body.appendChild(textArea);
-            textArea.select();
-            try { document.execCommand('copy'); } catch (err) { console.error('Fallback copy failed', err); }
-            document.body.removeChild(textArea);
-        }
-        
-        setAlertMsg("DL copied to clipboard! Opening Kansas DOR website.");
-        setTimeout(() => window.open('https://www.kdor.ks.gov/Apps/DLStatus/login.aspx', '_blank'), 1500);
-      };
-
+      // Summary Generation
       const generateSummaryText = () => {
-        let text = `=== QUICK QUOTE INTAKE ===\n\n`;
-        text += `[NAMED INSUREDS]\n`;
-        text += `1: ${insured.first1} ${insured.last1} | DOB: ${insured.dob1} | DL: ${insured.dl1} | SSN: ${insured.ssn1} | Ph: ${insured.phone1} | Email: ${insured.email1}\n`;
-        if (insured.first2) text += `2: ${insured.first2} ${insured.last2} | DOB: ${insured.dob2} | DL: ${insured.dl2} | SSN: ${insured.ssn2} | Ph: ${insured.phone2} | Email: ${insured.email2}\n`;
-        text += `Address: ${insured.address}\n\n`;
+        let text = `=== QUICK QUOTE INTAKE ===\n`;
+        text += `Categories: ${selectedCats.map(id => CATEGORIES.find(c => c.id === id)?.label).join(', ')}\n\n`;
+        text += `[NAMED INSUREDS]\n1: ${insured.first1} ${insured.last1} | DOB: ${insured.dob1} | DL: ${insured.dl1} (${insured.dlState1})\n`;
+        if (insured.first2) text += `2: ${insured.first2} ${insured.last2} | DOB: ${insured.dob2} | DL: ${insured.dl2} (${insured.dlState2})\n`;
+        text += `Phone: ${insured.phone1} | Email: ${insured.email1}\nAddress: ${insured.address}\n\n`;
 
         if (drivers.length > 0) {
           text += `[ADDITIONAL DRIVERS]\n`;
-          drivers.forEach((d, i) => { text += `Driver ${i+3}: ${d.first} ${d.last} | DOB: ${d.dob} | DL: ${d.dl} | Ph: ${d.phone}\n`; });
+          drivers.forEach((d, i) => text += `${i+3}: ${d.first} ${d.last} | DOB: ${d.dob} | DL: ${d.dl} (${d.dlState}) | Ph: ${d.phone}\n`);
           text += `\n`;
         }
 
-        text += `[VEHICLES]\n`;
-        vehicles.forEach((v, i) => { text += `Veh ${i+1}: ${v.year} ${v.make} ${v.model} | VIN: ${v.vin} | Cov: ${v.coverage}\n`; });
-        text += `\n`;
+        if (selectedCats.includes('auto') && vehicles.length > 0) {
+          text += `[PERSONAL AUTO]\n`;
+          vehicles.forEach(v => text += `${v.year} ${v.make} ${v.model} | VIN: ${v.vin} | Cov: ${v.coverage} ${v.coverage === 'Full Coverage' ? `(Ded: ${v.deductible})` : ''}\n`);
+          text += `\n`;
+        }
 
-        text += `[PRIOR INSURANCE]\n`;
-        text += `Company: ${priorIns.company} | Premium: $${priorIns.premium}\n\n`;
+        if (selectedCats.includes('commauto') && commAutoVehicles.length > 0) {
+          text += `[COMMERCIAL AUTO]\n`;
+          commAutoVehicles.forEach(v => text += `${v.year} ${v.make} ${v.model} ${v.desc ? `(${v.desc})` : ''} | VIN: ${v.vin} | Cov: ${v.coverage} ${v.coverage === 'Full Coverage' ? `(Ded: ${v.deductible})` : ''}\n`);
+          text += `\n`;
+        }
 
-        const finalRoof = home.roofMaterial === 'Other' ? home.roofMaterialOther : home.roofMaterial;
+        if (selectedCats.includes('camper') && camperVehicles.length > 0) {
+          text += `[CAMPERS / RVS]\n`;
+          camperVehicles.forEach(v => text += `${v.year} ${v.make} ${v.model} | VIN: ${v.vin} | Style: ${v.style} | Length: ${v.length} | Slides: ${v.slides} | Val: $${v.value} | Cov: ${v.coverage} ${v.coverage === 'Full Coverage' ? `(Ded: ${v.deductible})` : ''}\nPrior Carrier: ${v.carrier} ($${v.premium})\n`);
+          text += `\n`;
+        }
 
-        text += `[HOME DETAILS]\n`;
-        text += `Address: ${home.address || insured.address}\n`;
-        text += `SqFt: ${home.sqft} | Rep Cost: ${home.replacementCost} | Age: ${home.age} | Siding: ${home.siding} | Roof Mat: ${finalRoof}\n`;
-        text += `Basement: ${home.basement} (Finished: ${home.finishedBasement})\n`;
-        text += `Wood Stove: ${home.woodStove} | Detached Structures: ${home.detached} (${home.detachedDesc})\n`;
-        text += `Updates -> Elec: ${home.updateElec}, Plumb: ${home.updatePlumb}, HVAC: ${home.updateHvac}, Roof: ${home.updateRoof}\n`;
-        if (home.notes) text += `Home Notes: ${home.notes}\n`;
-        text += `\n`;
+        if (selectedCats.includes('cycle') && cycleVehicles.length > 0) {
+          text += `[MOTORCYCLE/ATV]\n`;
+          cycleVehicles.forEach(v => text += `${v.year} ${v.make} ${v.model} | VIN: ${v.vin} | CC: ${v.cc} | Cov: ${v.coverage} ${v.coverage === 'Full Coverage' ? `(Ded: ${v.deductible})` : ''}\n`);
+          text += `\n`;
+        }
 
-        text += `[CROSS-SELL & NOTES]\n`;
-        text += `Term Life: ${crossSell.termLife}\n`;
-        text += `Motorcycle/ATV: ${crossSell.powersports}\n`;
-        text += `Overall Notes: ${overallNotes}\n`;
+        if (selectedCats.includes('watercraft') && watercraft.length > 0) {
+          text += `[WATERCRAFT]\n`;
+          watercraft.forEach(v => text += `${v.year} ${v.make} ${v.model} | Hull ID: ${v.hullId} | Mat: ${v.material === 'Other' ? v.materialOther : v.material} | Motor: ${v.motorMake} (${v.hp} HP)\nVal: $${v.value} | Cov: ${v.coverage} ${v.coverage === 'Full Coverage' ? `(Ded: ${v.deductible})` : ''}\n`);
+          text += `\n`;
+        }
 
+        if (selectedCats.includes('home') || (selectedCats.includes('farm') && !farmNoDwelling)) {
+          text += `[HOME/DWELLING DETAILS]\nStyle: ${home.style === 'Other' ? home.styleOther : home.style} | Siding: ${home.siding} | Roof: ${home.roofMaterial === 'Other' ? home.roofMaterialOther : home.roofMaterial}\n`;
+          text += `SqFt: ${home.sqft} | Rep Cost: $${home.replacementCost} | Year Built: ${home.age} | Bsmt: ${home.basement} (Finished: ${home.finishedBasement})\n`;
+          text += `Wood Stove: ${home.woodStove} | Detached: ${home.detached} (${home.detachedDesc})\n`;
+          text += `Updates -> Elec: ${home.updateElec}, Plumb: ${home.updatePlumb}, HVAC: ${home.updateHvac}, Roof: ${home.updateRoof}\n`;
+          if (home.notes) text += `Dwelling Notes: ${home.notes}\n`;
+          text += `\n`;
+        } else if (selectedCats.includes('farm') && farmNoDwelling) {
+          text += `[HOME/DWELLING DETAILS]\nNO DWELLING ON POLICY\n\n`;
+        }
+
+        if (selectedCats.includes('farm')) {
+          text += `[FARM LOCATIONS]\n`;
+          farmLocations.forEach((l, i) => text += `Loc ${i+1}${l.isPrimary ? ' (PRIMARY)' : ''}: Sec ${l.section}, Twp ${l.township}, Rng ${l.range} | ${l.acres} Acres (${l.acreType}) | ${l.county} County | Addr: ${l.address}\n`);
+          text += `\n[FARM OUTBUILDINGS]\n`;
+          farmOutbuildings.forEach((o, i) => text += `Bldg ${i+1}: ${o.structureType === 'Other' ? o.structureOther : o.structureType} | Const: ${o.construction === 'Other' ? o.constructionOther : o.construction} | Floor: ${o.flooring === 'Other' ? o.flooringOther : o.flooring} | Siding: ${o.siding === 'Other' ? o.sidingOther : o.siding} | Roof: ${o.roof === 'Other' ? o.roofOther : o.roof} (Age: ${o.roofAge}) | Style: ${o.style}\nVal: $${o.value} (${o.coverage})\n`);
+          text += `\n[FARM SCHEDULED PROPERTY]\n`;
+          farmProperty.forEach((p, i) => text += `Item ${i+1}: ${p.year} ${p.make} ${p.model} | Desc: ${p.desc} | Serial: ${p.serial} | Val: $${p.value}\n`);
+          text += `\n`;
+        }
+
+        if (['bop', 'wc', 'commauto', 'farm'].some(c => selectedCats.includes(c))) {
+          text += `[BUSINESS / COMMERCIAL INFO]\nName: ${business.name} | Entity: ${business.entity === 'Other' ? business.entityOther : business.entity} | FEIN: ${business.fein} | Year Started: ${business.yearStarted}\nAddr: ${business.address}\nOps/Desc: ${business.operations} | Class Code: ${business.classCode}\n`;
+          text += `Income: $${business.income} | Payroll: $${business.payroll} | Employees: ${business.employeesFt} FT / ${business.employeesPt} PT\n`;
+          text += `Losses: ${business.losses}\nPrior Carrier: ${business.carrier} ($${business.premium}) | Renewal: ${business.renewalDate}\n\n`;
+        }
+
+        if (selectedCats.includes('wc') && wcCodes.length > 0) {
+          text += `[WORK COMP CODES]\n`;
+          wcCodes.forEach(c => text += `Code/Desc: ${c.code} ${c.ifAny ? '(IF ANY)' : ''} | Payroll: $${c.payroll} | Emp: ${c.ft} FT / ${c.pt} PT\n`);
+          text += `\n`;
+        }
+
+        if (selectedCats.includes('life')) {
+          text += `[LIFE INSURANCE]\nTarget Amount: $${life.amount} | Term: ${life.term}\nHealth/Tobacco Notes: ${life.healthNotes}\n\n`;
+        }
+
+        text += `[OVERALL NOTES]\n${overallNotes}`;
         return text;
+      };
+
+      const sendViaEmail = () => {
+        if (!insured.last1) return setAlertMsg("Please enter at least the Primary Last Name.");
+        let folderName = `${insured.last1}, ${insured.first1}${insured.first2 ? ' & ' + insured.first2 : ''}`;
+        const subject = encodeURIComponent(`[QuickQuote] ${folderName}`);
+        const body = encodeURIComponent(generateSummaryText());
+        const link = document.createElement('a');
+        link.href = `mailto:${AUTOMATION_EMAIL}?cc=${CSR_EMAIL}&subject=${subject}&body=${body}`;
+        link.target = '_top'; 
+        link.click();
+        setShowSummary(false);
       };
 
       const copyToClipboard = () => {
         const summary = generateSummaryText();
-        
         if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(summary)
-            .then(() => setAlertMsg("Copied to clipboard! You can now paste this into an email, EPIC, or a document."))
+            .then(() => setAlertMsg("Copied to clipboard!"))
             .catch(e => console.error(e));
         } else {
-            // Fallback for iFrame environments
             const textArea = document.createElement("textarea");
             textArea.value = summary;
             document.body.appendChild(textArea);
@@ -260,46 +263,92 @@
         }
       };
 
-      const sendViaEmail = () => {
-        if (!insured.last1 || !insured.first1) {
-          setAlertMsg("Please fill out at least the Primary Insured's First and Last Name.");
-          return;
-        }
-
-        let folderNameStr = `${insured.last1}, ${insured.first1}`;
-        if (insured.first2) {
-          folderNameStr += ` & ${insured.first2}`;
-        }
-
-        const subject = encodeURIComponent(`[QuickQuote] ${folderNameStr}`);
-        const body = encodeURIComponent(generateSummaryText());
-        const mailtoLink = `mailto:${AUTOMATION_EMAIL}?cc=${CSR_EMAIL}&subject=${subject}&body=${body}`;
-        
-        const linkElement = document.createElement('a');
-        linkElement.href = mailtoLink;
-        linkElement.target = '_top'; 
-        document.body.appendChild(linkElement);
-        linkElement.click();
-        document.body.removeChild(linkElement);
-        
-        setShowSummary(false);
-      };
+      // --- Effects ---
+      useEffect(() => {
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(i => i.setAttribute('enterkeyhint', 'next'));
+      }, [appStep, selectedCats]);
 
       const handleGlobalKeyDown = (e) => {
         if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
           e.preventDefault();
           const focusable = Array.from(document.querySelectorAll('input:not([disabled]), select:not([disabled]), textarea:not([disabled])'));
-          const index = focusable.indexOf(e.target);
-          if (index > -1 && index < focusable.length - 1) {
-            focusable[index + 1].focus();
-          }
+          const idx = focusable.indexOf(e.target);
+          if (idx > -1 && idx < focusable.length - 1) focusable[idx + 1].focus();
         }
       };
 
+      // --- Render Shared Vehicle Fields ---
+      const renderVehicleFields = (v, i, setter, list, hasDesc = false) => (
+        <>
+          <div className="flex flex-col md:flex-row gap-2 mb-3">
+            <input placeholder="VIN" className="border p-3 rounded flex-grow font-mono uppercase focus:ring-2 ring-[#D4AF37] outline-none" value={v.vin} onChange={e => updateListItem(setter, list, i, 'vin', e.target.value)} />
+            <button onClick={() => decodeVin(v.vin, (data) => {
+              const newList = [...list];
+              newList[i] = { ...newList[i], ...data };
+              setter(newList);
+            })} className="bg-black text-white px-4 rounded font-bold hover:bg-gray-800 transition-colors">Decode</button>
+          </div>
+          {hasDesc && <input placeholder="Vehicle Description (e.g. Dump Truck, Trailer)" className="border p-2 rounded mb-3 w-full focus:ring-2 ring-[#D4AF37] outline-none" value={v.desc} onChange={e => updateListItem(setter, list, i, 'desc', e.target.value)} />}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <input placeholder="Year" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.year} onChange={e => updateListItem(setter, list, i, 'year', e.target.value)} />
+            <input placeholder="Make" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.make} onChange={e => updateListItem(setter, list, i, 'make', e.target.value)} />
+            <input placeholder="Model" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.model} onChange={e => updateListItem(setter, list, i, 'model', e.target.value)} />
+            <select className="border p-2 rounded font-bold focus:ring-2 ring-[#D4AF37] outline-none bg-white" value={v.coverage} onChange={e => updateListItem(setter, list, i, 'coverage', e.target.value)}>
+              <option>Liability Only</option><option>Full Coverage</option>
+            </select>
+          </div>
+          {v.coverage === 'Full Coverage' && (
+            <div className="mt-3 bg-yellow-50 p-2 rounded border border-[#D4AF37]/50">
+              <label className="text-xs font-bold text-black block mb-1">Comp/Coll Deductible:</label>
+              <select className="border p-2 rounded w-full bg-white font-semibold focus:ring-2 ring-[#D4AF37] outline-none" value={v.deductible} onChange={e => updateListItem(setter, list, i, 'deductible', e.target.value)}>
+                <option value="" disabled>Select Deductible...</option>
+                {DEDUCTIBLES.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
+          )}
+        </>
+      );
+
+      // --- RENDER COMPONENTS ---
+
+      if (appStep === 'selection') {
+        return (
+          <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col items-center">
+            <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+              <div className="bg-black text-white p-6 text-center border-b-4 border-[#D4AF37]">
+                <h1 className="text-3xl font-bold">QuickQuote Pro</h1>
+                <p className="text-gray-400 mt-1 uppercase tracking-widest text-xs font-bold">Farmers Union Midwest Agency</p>
+              </div>
+              <div className="p-8">
+                <h2 className="text-xl font-bold text-gray-800 mb-6 text-center">What type of quote are we working on?</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                  {CATEGORIES.map(cat => (
+                    <button 
+                      key={cat.id} 
+                      onClick={() => toggleCategory(cat.id)}
+                      className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${selectedCats.includes(cat.id) ? 'border-[#D4AF37] bg-yellow-50 shadow-md' : 'border-gray-100 bg-gray-50 hover:border-gray-300'}`}
+                    >
+                      <cat.icon className={`w-6 h-6 ${selectedCats.includes(cat.id) ? 'text-[#D4AF37]' : 'text-gray-400'}`} />
+                      <span className={`font-bold ${selectedCats.includes(cat.id) ? 'text-black' : 'text-gray-600'}`}>{cat.label}</span>
+                    </button>
+                  ))}
+                </div>
+                <button 
+                  disabled={selectedCats.length === 0}
+                  onClick={() => setAppStep('entry')}
+                  className={`w-full py-4 rounded-xl font-extrabold text-lg shadow-lg transition-all ${selectedCats.length > 0 ? 'bg-black text-[#D4AF37] hover:bg-gray-800 cursor-pointer' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+                >
+                  START DATA COLLECTION
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
       return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-sans text-slate-800" onKeyDown={handleGlobalKeyDown}>
-          
-          {/* Custom Message Box (Replaces generic alerts) */}
           {alertMsg && (
             <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-[100]">
               <div className="bg-white p-6 rounded-xl shadow-xl max-w-sm w-full text-center border-t-4 border-[#D4AF37]">
@@ -309,36 +358,27 @@
             </div>
           )}
 
-          <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden border border-slate-200">
-            
-            {/* Branded Header (Black and Gold) */}
+          <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden border border-slate-200 mb-20">
             <div className="bg-black border-t-4 border-[#D4AF37] text-white p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                {/* Logo Placeholder: Save your screenshot as "logo.jpg" in the same folder */}
-                <img 
-                  src="logo.jpg" 
-                  alt="FUMA Logo" 
-                  className="h-12 md:h-14 w-auto object-contain bg-white p-1 rounded shadow-sm" 
-                  onError={(e) => { e.target.style.display = 'none'; }} 
-                />
+              <div className="flex items-center gap-4 cursor-pointer" onClick={() => setAppStep('selection')}>
+                <img src="logo.jpg" alt="FUMA Logo" className="h-12 w-auto bg-white p-1 rounded" onError={e => e.target.style.display = 'none'} />
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-                    QuickQuote Pro
-                  </h1>
-                  <p className="text-gray-300 text-sm mt-1 tracking-wide font-medium">Farmers Union Midwest Agency</p>
+                  <h1 className="text-2xl font-bold">QuickQuote Pro</h1>
+                  <p className="text-gray-400 text-xs font-bold uppercase tracking-tight">Return to Menu</p>
                 </div>
               </div>
-              <button onClick={() => setShowSummary(true)} className="bg-[#D4AF37] hover:bg-[#b5952f] w-full md:w-auto text-black px-6 py-2.5 rounded-lg font-extrabold flex items-center justify-center gap-2 transition-colors shadow-md">
-                <CheckCircle className="w-5 h-5" /> Finish Quote
+              <button onClick={() => setShowSummary(true)} className="bg-[#D4AF37] hover:bg-[#b5952f] text-black px-6 py-2.5 rounded-lg font-extrabold flex items-center justify-center gap-2 shadow-md transition-colors">
+                <CheckCircle className="w-5 h-5" /> Finish & Send
               </button>
             </div>
 
-            <div className="p-6 space-y-8">
-              {/* Primary Address Section */}
-              <section>
-                <h2 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2 text-black"><MapPin className="w-6 h-6 text-[#D4AF37]" /> Primary Address</h2>
+            <div className="p-6 space-y-10">
+              
+              {/* GLOBAL: Primary Address */}
+              <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
+                <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><MapPin className="w-6 h-6 text-[#D4AF37]" /> Household / Primary Address</h2>
                 <div className="relative" ref={suggestionRef}>
-                  <input placeholder="Start typing household primary address..." className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none w-full font-medium" value={insured.address} onChange={handleAddressChange} />
+                  <input placeholder="Start typing address..." className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full font-medium" value={insured.address} onChange={handleAddressChange} />
                   {showSuggestions && addressSuggestions.length > 0 && (
                     <ul className="absolute z-10 w-full bg-white border border-slate-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
                       {addressSuggestions.map((item, idx) => (
@@ -347,172 +387,476 @@
                     </ul>
                   )}
                 </div>
-                <div className="flex flex-col md:flex-row md:items-center gap-3 mt-3 p-3 bg-gray-50 rounded-lg border border-[#D4AF37]/30">
-                  <span className="text-sm font-bold text-black">Quick Look-up:</span>
-                  <div className="flex gap-2">
-                    <button onClick={handleRealtorLookup} className="bg-white border border-gray-300 text-black px-3 py-1.5 rounded hover:bg-yellow-50 flex items-center justify-center gap-1 text-sm font-bold transition-colors flex-grow md:flex-grow-0"><Home className="w-4 h-4"/> Realtor.com</button>
-                  </div>
-                  <div className="flex items-center gap-2 md:ml-auto">
-                    {detectedCounty && <span className="text-xs text-slate-600 font-semibold bg-white px-2 py-1 rounded border border-gray-300">{detectedCounty} County detected</span>}
-                    <button onClick={handleCountyLookup} className="bg-black text-white px-3 py-1.5 rounded hover:bg-gray-800 flex items-center justify-center gap-1 text-sm font-bold transition-colors whitespace-nowrap"><ExternalLink className="w-4 h-4"/> Parcel Search</button>
-                  </div>
-                </div>
               </section>
 
-              {/* Insured Section */}
-              <section>
-                <h2 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2 text-black"><User className="w-6 h-6 text-[#D4AF37]" /> Named Insureds</h2>
+              {/* GLOBAL: Named Insureds */}
+              <section className="bg-white p-4 rounded-lg border-l-4 border-[#D4AF37] shadow-sm border border-gray-100">
+                <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><User className="w-6 h-6 text-[#D4AF37]" /> Named Insureds</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input placeholder="Primary Insured First Name" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.first1} onChange={e => setInsured({...insured, first1: e.target.value})} />
-                  <input placeholder="Primary Insured Last Name" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.last1} onChange={e => setInsured({...insured, last1: e.target.value})} />
-                  <input placeholder="DOB (MMDDYYYY)" inputMode="numeric" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dob1} onChange={e => setInsured({...insured, dob1: formatDOB(e.target.value)})} />
-                  <div className="flex gap-2">
-                    <input placeholder="Drivers License" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.dl1} onChange={e => setInsured({...insured, dl1: e.target.value})} />
-                    <button onClick={() => handleMvrLookup(insured.dl1)} className="bg-black text-white px-3 rounded hover:bg-gray-800 flex items-center justify-center gap-1 font-semibold text-sm whitespace-nowrap transition-colors"><ExternalLink className="w-4 h-4"/> KS MVR</button>
+                  <input placeholder="Primary First" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.first1} onChange={e => setInsured({...insured, first1: e.target.value})} />
+                  <input placeholder="Primary Last" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.last1} onChange={e => setInsured({...insured, last1: e.target.value})} />
+                  <input placeholder="DOB (MMDDYYYY)" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dob1} onChange={e => setInsured({...insured, dob1: formatDOB(e.target.value)})} />
+                  <div className="flex gap-1">
+                    <input placeholder="DL Number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.dl1} onChange={e => setInsured({...insured, dl1: e.target.value})} />
+                    <select className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dlState1} onChange={e => setInsured({...insured, dlState1: e.target.value})}>
+                      {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
                   </div>
-                  <input placeholder="Social Security Number" type="password" inputMode="numeric" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.ssn1} onChange={e => setInsured({...insured, ssn1: e.target.value})} />
-                  <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.phone1} onChange={e => setInsured({...insured, phone1: e.target.value})} />
-                  <input placeholder="Email Address" type="email" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.email1} onChange={e => setInsured({...insured, email1: e.target.value})} />
+                  <input placeholder="Social Security Number" type="password" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.ssn1} onChange={e => setInsured({...insured, ssn1: e.target.value})} />
+                  <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.phone1} onChange={e => setInsured({...insured, phone1: e.target.value})} />
+                  <input placeholder="Email Address" type="email" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.email1} onChange={e => setInsured({...insured, email1: e.target.value})} />
                   
-                  <div className="md:col-span-2 mt-4 border-t pt-4"><p className="text-sm font-bold text-black mb-2">2nd Named Insured (Optional)</p></div>
-                  <input placeholder="2nd Insured First Name" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.first2} onChange={e => setInsured({...insured, first2: e.target.value})} />
-                  <input placeholder="2nd Insured Last Name" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.last2} onChange={e => setInsured({...insured, last2: e.target.value})} />
-                  <input placeholder="DOB (MMDDYYYY)" inputMode="numeric" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dob2} onChange={e => setInsured({...insured, dob2: formatDOB(e.target.value)})} />
-                  <div className="flex gap-2">
-                    <input placeholder="Drivers License" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.dl2} onChange={e => setInsured({...insured, dl2: e.target.value})} />
-                    <button onClick={() => handleMvrLookup(insured.dl2)} className="bg-black text-white px-3 rounded hover:bg-gray-800 flex items-center justify-center gap-1 font-semibold text-sm whitespace-nowrap transition-colors"><ExternalLink className="w-4 h-4"/> KS MVR</button>
+                  <div className="md:col-span-2 border-t mt-2 pt-4"><p className="text-xs font-bold text-gray-400 uppercase">2nd Named Insured (Optional)</p></div>
+                  <input placeholder="First Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.first2} onChange={e => setInsured({...insured, first2: e.target.value})} />
+                  <input placeholder="Last Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.last2} onChange={e => setInsured({...insured, last2: e.target.value})} />
+                  <input placeholder="DOB (MMDDYYYY)" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dob2} onChange={e => setInsured({...insured, dob2: formatDOB(e.target.value)})} />
+                  <div className="flex gap-1">
+                    <input placeholder="DL Number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={insured.dl2} onChange={e => setInsured({...insured, dl2: e.target.value})} />
+                    <select className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.dlState2} onChange={e => setInsured({...insured, dlState2: e.target.value})}>
+                      {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
                   </div>
-                  <input placeholder="Social Security Number" type="password" inputMode="numeric" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.ssn2} onChange={e => setInsured({...insured, ssn2: e.target.value})} />
-                  <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.phone2} onChange={e => setInsured({...insured, phone2: e.target.value})} />
-                  <input placeholder="Email Address" type="email" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.email2} onChange={e => setInsured({...insured, email2: e.target.value})} />
+                  <input placeholder="Social Security Number" type="password" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.ssn2} onChange={e => setInsured({...insured, ssn2: e.target.value})} />
+                  <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.phone2} onChange={e => setInsured({...insured, phone2: e.target.value})} />
+                  <input placeholder="Email Address" type="email" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={insured.email2} onChange={e => setInsured({...insured, email2: e.target.value})} />
                 </div>
               </section>
 
-              {/* Additional Drivers */}
-              <section>
-                <h2 className="text-xl font-bold border-b pb-2 mb-4 flex items-center justify-between text-black">
-                  <span className="flex items-center gap-2"><Users className="w-6 h-6 text-[#D4AF37]" /> Additional Drivers</span>
-                  <button onClick={addDriver} className="text-sm bg-gray-100 text-black border border-gray-300 px-3 py-1.5 rounded-full flex items-center gap-1 font-bold hover:bg-yellow-50 hover:border-[#D4AF37] transition-colors"><Plus className="w-4 h-4"/> Add Driver</button>
-                </h2>
-                {drivers.map((driver, index) => (
-                  <div key={index} className="grid grid-cols-1 md:grid-cols-5 gap-3 bg-gray-50 p-4 rounded-lg mb-3 relative border border-gray-200">
-                    <button onClick={() => removeDriver(index)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-5 h-5"/></button>
-                    <input placeholder="First Name" className="border p-2 rounded bg-white focus:ring-2 ring-[#D4AF37] outline-none" value={driver.first} onChange={e => updateDriver(index, 'first', e.target.value)} />
-                    <input placeholder="Last Name" className="border p-2 rounded bg-white focus:ring-2 ring-[#D4AF37] outline-none" value={driver.last} onChange={e => updateDriver(index, 'last', e.target.value)} />
-                    <input placeholder="DOB (MMDDYYYY)" inputMode="numeric" className="border p-2 rounded bg-white focus:ring-2 ring-[#D4AF37] outline-none" value={driver.dob} onChange={e => updateDriver(index, 'dob', formatDOB(e.target.value))} />
-                    <div className="flex gap-1">
-                      <input placeholder="Drivers License" className="border p-2 rounded bg-white focus:ring-2 ring-[#D4AF37] outline-none w-full" value={driver.dl} onChange={e => updateDriver(index, 'dl', e.target.value)} />
-                      <button onClick={() => handleMvrLookup(driver.dl)} className="bg-black text-white px-2 rounded hover:bg-gray-800 flex items-center justify-center gap-1 text-xs font-semibold whitespace-nowrap" title="KS MVR"><ExternalLink className="w-3 h-3"/> MVR</button>
+              {/* SHARED: DRIVERS SECTION (Auto, Cycle, Camper, CommAuto, WC) */}
+              {['auto', 'cycle', 'camper', 'commauto', 'wc'].some(c => selectedCats.includes(c)) && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-gray-400 shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
+                    <span className="flex items-center gap-2"><Users className="w-6 h-6 text-[#D4AF37]" /> Additional Drivers</span>
+                    <button onClick={addDriver} className="text-xs bg-gray-100 border border-gray-300 px-3 py-2 rounded-full font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all">+ Add Driver</button>
+                  </h2>
+                  {drivers.map((d, i) => (
+                    <div key={i} className="grid grid-cols-1 md:grid-cols-5 gap-3 bg-gray-50 p-4 rounded-lg mb-3 relative border border-gray-200">
+                      <button onClick={() => removeDriver(i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-4 h-4"/></button>
+                      <input placeholder="First Name" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={d.first} onChange={e => updateDriver(i, 'first', e.target.value)} />
+                      <input placeholder="Last Name" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={d.last} onChange={e => updateDriver(i, 'last', e.target.value)} />
+                      <input placeholder="DOB" inputMode="numeric" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={d.dob} onChange={e => updateDriver(i, 'dob', formatDOB(e.target.value))} />
+                      <div className="flex gap-1">
+                        <input placeholder="DL Number" className="border p-2 rounded w-full focus:ring-2 ring-[#D4AF37] outline-none" value={d.dl} onChange={e => updateDriver(i, 'dl', e.target.value)} />
+                        <select className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={d.dlState} onChange={e => updateDriver(i, 'dlState', e.target.value)}>
+                          {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </div>
+                      <input placeholder="Phone" type="tel" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={d.phone} onChange={e => updateDriver(i, 'phone', e.target.value)} />
                     </div>
-                    <input placeholder="Phone" type="tel" className="border p-2 rounded bg-white focus:ring-2 ring-[#D4AF37] outline-none" value={driver.phone} onChange={e => updateDriver(index, 'phone', e.target.value)} />
-                  </div>
-                ))}
-                {drivers.length === 0 && <p className="text-slate-400 text-sm italic">No additional drivers added.</p>}
-              </section>
+                  ))}
+                  {drivers.length === 0 && <p className="text-slate-400 text-sm italic">No additional drivers needed.</p>}
+                </section>
+              )}
 
-              {/* Vehicles */}
-              <section>
-                <h2 className="text-xl font-bold border-b pb-2 mb-4 flex items-center justify-between text-black">
-                  <span className="flex items-center gap-2"><Car className="w-6 h-6 text-[#D4AF37]" /> Vehicles</span>
-                  <button onClick={addVehicle} className="text-sm bg-gray-100 text-black border border-gray-300 px-3 py-1.5 rounded-full flex items-center gap-1 font-bold hover:bg-yellow-50 hover:border-[#D4AF37] transition-colors"><Plus className="w-4 h-4"/> Add Vehicle</button>
-                </h2>
-                {vehicles.map((veh, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg mb-4 relative border border-gray-200">
-                    {index > 0 && <button onClick={() => removeVehicle(index)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-5 h-5"/></button>}
-                    <div className="flex flex-col md:flex-row gap-2 mb-3">
-                      <input placeholder="Enter VIN" className="border p-3 rounded flex-grow font-mono uppercase focus:ring-2 ring-[#D4AF37] outline-none" value={veh.vin} onChange={e => updateVehicle(index, 'vin', e.target.value)} />
-                      <button onClick={() => decodeVin(index, veh.vin)} className="bg-black text-white px-4 py-3 rounded flex items-center justify-center gap-2 hover:bg-gray-800 font-bold transition-colors"><Search className="w-4 h-4"/> Decode VIN</button>
-                    </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                      <input placeholder="Year" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={veh.year} onChange={e => updateVehicle(index, 'year', e.target.value)} />
-                      <input placeholder="Make" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={veh.make} onChange={e => updateVehicle(index, 'make', e.target.value)} />
-                      <input placeholder="Model" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={veh.model} onChange={e => updateVehicle(index, 'model', e.target.value)} />
-                      <select className="border p-2 rounded font-semibold bg-white cursor-pointer focus:ring-2 ring-[#D4AF37] outline-none" value={veh.coverage} onChange={e => updateVehicle(index, 'coverage', e.target.value)}>
-                        <option value="Liability">Liability Only</option><option value="Full Coverage">Full Coverage</option>
+              {/* COMMERCIAL DATA (BOP, WC, COMM AUTO, FARM) */}
+              {['bop', 'wc', 'commauto', 'farm'].some(c => selectedCats.includes(c)) && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><Briefcase className="w-6 h-6 text-[#D4AF37]" /> Business Information</h2>
+                  <div className="grid grid-cols-2 gap-4">
+                    <input placeholder="Legal Business Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-2 md:col-span-1" value={business.name} onChange={e => setBusiness({...business, name: e.target.value})} />
+                    
+                    <div className="col-span-2 md:col-span-1 flex gap-2">
+                      <select className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={business.entity} onChange={e => setBusiness({...business, entity: e.target.value})}>
+                        <option value="" disabled>Entity Type...</option>
+                        <option>Sole Proprietorship</option><option>LLC</option><option>Corporation</option><option>Non Profit</option><option>Other</option>
                       </select>
+                      {business.entity === 'Other' && <input placeholder="Describe Entity..." className="border p-3 rounded bg-gray-50 w-full focus:ring-2 ring-[#D4AF37] outline-none" value={business.entityOther} onChange={e => setBusiness({...business, entityOther: e.target.value})} />}
+                    </div>
+
+                    <input placeholder="Business Address" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-2" value={business.address} onChange={e => setBusiness({...business, address: e.target.value})} />
+                    <input placeholder="FEIN (Tax ID)" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={business.fein} onChange={e => setBusiness({...business, fein: e.target.value})} />
+                    <input placeholder="Year Started" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={business.yearStarted} onChange={e => setBusiness({...business, yearStarted: e.target.value})} />
+                    
+                    <textarea placeholder="Description of Operations / Nature of Business" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-2 h-20" value={business.operations} onChange={e => setBusiness({...business, operations: e.target.value})} />
+                    <input placeholder="Class Code (If known)" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-2" value={business.classCode} onChange={e => setBusiness({...business, classCode: e.target.value})} />
+
+                    <input placeholder="Est. Annual Income" type="number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={business.income} onChange={e => setBusiness({...business, income: e.target.value})} />
+                    <input placeholder="Est. Annual Payroll" type="number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={business.payroll} onChange={e => setBusiness({...business, payroll: e.target.value})} />
+                    <input placeholder="Full Time Employees" type="number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={business.employeesFt} onChange={e => setBusiness({...business, employeesFt: e.target.value})} />
+                    <input placeholder="Part Time Employees" type="number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={business.employeesPt} onChange={e => setBusiness({...business, employeesPt: e.target.value})} />
+                    
+                    <input placeholder="Past Losses/Claims" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-2" value={business.losses} onChange={e => setBusiness({...business, losses: e.target.value})} />
+                    
+                    <input placeholder="Current Carrier" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-2 md:col-span-1" value={business.carrier} onChange={e => setBusiness({...business, carrier: e.target.value})} />
+                    <div className="grid grid-cols-2 gap-2 col-span-2 md:col-span-1">
+                      <input placeholder="Premium ($)" type="number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={business.premium} onChange={e => setBusiness({...business, premium: e.target.value})} />
+                      <input placeholder="Renewal Date" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={business.renewalDate} onChange={e => setBusiness({...business, renewalDate: e.target.value})} />
                     </div>
                   </div>
-                ))}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  <input placeholder="Current Insurance Company" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={priorIns.company} onChange={e => setPriorIns({...priorIns, company: e.target.value})} />
-                  <input placeholder="Current Premium ($)" type="number" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={priorIns.premium} onChange={e => setPriorIns({...priorIns, premium: e.target.value})} />
-                </div>
-              </section>
+                </section>
+              )}
 
-              {/* Home Section */}
-              <section>
-                <h2 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2 text-black"><Home className="w-6 h-6 text-[#D4AF37]" /> Homeowners Info</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <input placeholder="Home Address (if different)" className="border p-3 rounded bg-slate-50 col-span-2 md:col-span-4 focus:ring-2 ring-[#D4AF37] outline-none" value={home.address} onChange={e => setHome({...home, address: e.target.value})} />
-                  <input placeholder="Square Footage" inputMode="numeric" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.sqft} onChange={e => setHome({...home, sqft: e.target.value})} />
-                  <input placeholder="Est. Replacement Cost" inputMode="numeric" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.replacementCost} onChange={e => setHome({...home, replacementCost: e.target.value})} />
-                  <input placeholder="Year Built / Age" inputMode="numeric" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.age} onChange={e => setHome({...home, age: e.target.value})} />
+              {/* WORK COMP CODES */}
+              {selectedCats.includes('wc') && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-[#D4AF37] shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
+                    <span className="flex items-center gap-2"><HardHat className="w-6 h-6 text-[#D4AF37]" /> Work Comp Class Codes</span>
+                    <button onClick={() => addListItem(setWcCodes, wcCodes, { code: '', payroll: '', ft: '', pt: '', ifAny: false })} className="text-xs bg-gray-100 border border-gray-300 px-3 py-2 rounded-full font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all">+ Add Code</button>
+                  </h2>
+                  {wcCodes.map((c, i) => (
+                    <div key={i} className="grid grid-cols-2 md:grid-cols-5 gap-3 bg-gray-50 p-4 rounded-lg mb-3 relative border border-gray-200">
+                      <button onClick={() => removeListItem(setWcCodes, wcCodes, i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-4 h-4"/></button>
+                      <input placeholder="Code / Desc" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none col-span-2" value={c.code} onChange={e => updateListItem(setWcCodes, wcCodes, i, 'code', e.target.value)} />
+                      <input placeholder="Annual Payroll" type="number" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={c.payroll} onChange={e => updateListItem(setWcCodes, wcCodes, i, 'payroll', e.target.value)} />
+                      <div className="flex gap-1">
+                        <input placeholder="FT" type="number" className="border p-2 rounded w-1/2 focus:ring-2 ring-[#D4AF37] outline-none" value={c.ft} onChange={e => updateListItem(setWcCodes, wcCodes, i, 'ft', e.target.value)} />
+                        <input placeholder="PT" type="number" className="border p-2 rounded w-1/2 focus:ring-2 ring-[#D4AF37] outline-none" value={c.pt} onChange={e => updateListItem(setWcCodes, wcCodes, i, 'pt', e.target.value)} />
+                      </div>
+                      <label className="flex items-center gap-2 text-sm font-bold bg-white border p-2 rounded cursor-pointer">
+                        <input type="checkbox" checked={c.ifAny} onChange={e => updateListItem(setWcCodes, wcCodes, i, 'ifAny', e.target.checked)} className="accent-[#D4AF37] w-4 h-4" />
+                        "If Any" (No Payroll)
+                      </label>
+                    </div>
+                  ))}
+                </section>
+              )}
+
+              {/* FARM LOCATIONS */}
+              {selectedCats.includes('farm') && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
+                    <span className="flex items-center gap-2"><MapPin className="w-6 h-6 text-[#D4AF37]" /> Farm Locations</span>
+                    <button onClick={() => addListItem(setFarmLocations, farmLocations, { isPrimary: false, section: '', township: '', range: '', acres: '', county: '', address: '', acreType: '' })} className="text-xs bg-gray-100 border border-gray-300 px-3 py-2 rounded-full font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all">+ Add Location</button>
+                  </h2>
+                  {farmLocations.map((l, i) => (
+                    <div key={i} className="bg-gray-50 p-4 rounded-lg mb-4 relative border border-gray-200">
+                      <button onClick={() => removeListItem(setFarmLocations, farmLocations, i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-5 h-5"/></button>
+                      <label className="flex items-center gap-2 font-bold text-[#D4AF37] bg-black px-3 py-2 rounded w-max mb-3 cursor-pointer">
+                        <input type="radio" name="primaryFarmLoc" checked={l.isPrimary} onChange={() => {
+                          const newList = farmLocations.map((loc, idx) => ({ ...loc, isPrimary: idx === i }));
+                          setFarmLocations(newList);
+                        }} className="accent-[#D4AF37] w-4 h-4" />
+                        Primary Residence Location
+                      </label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <input placeholder="Section" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={l.section} onChange={e => updateListItem(setFarmLocations, farmLocations, i, 'section', e.target.value)} />
+                        <input placeholder="Township" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={l.township} onChange={e => updateListItem(setFarmLocations, farmLocations, i, 'township', e.target.value)} />
+                        <input placeholder="Range" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={l.range} onChange={e => updateListItem(setFarmLocations, farmLocations, i, 'range', e.target.value)} />
+                        <input placeholder="County" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={l.county} onChange={e => updateListItem(setFarmLocations, farmLocations, i, 'county', e.target.value)} />
+                        <input placeholder="Total Acres" inputMode="numeric" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={l.acres} onChange={e => updateListItem(setFarmLocations, farmLocations, i, 'acres', e.target.value)} />
+                        <input placeholder="Acre Type (Tillable, Pasture...)" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none col-span-2 md:col-span-1" value={l.acreType} onChange={e => updateListItem(setFarmLocations, farmLocations, i, 'acreType', e.target.value)} />
+                        <input placeholder="Location Address" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none col-span-2" value={l.address} onChange={e => updateListItem(setFarmLocations, farmLocations, i, 'address', e.target.value)} />
+                      </div>
+                    </div>
+                  ))}
+                </section>
+              )}
+
+              {/* HOME/FARM DWELLING INFO */}
+              {(selectedCats.includes('home') || selectedCats.includes('farm')) && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-[#D4AF37] shadow-sm border border-gray-100">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 border-b pb-2">
+                    <h2 className="text-xl font-bold flex items-center gap-2 text-black"><Home className="w-6 h-6 text-[#D4AF37]" /> Dwelling Details</h2>
+                    {selectedCats.includes('farm') && (
+                      <label className="flex items-center gap-2 mt-2 md:mt-0 font-bold text-red-600 bg-red-50 px-3 py-1.5 rounded cursor-pointer border border-red-200">
+                        <input type="checkbox" checked={farmNoDwelling} onChange={e => setFarmNoDwelling(e.target.checked)} className="w-4 h-4 accent-red-600" />
+                        Check here if NO dwelling on policy
+                      </label>
+                    )}
+                  </div>
                   
-                  {/* Siding Dropdown */}
-                  <select className={`border p-3 rounded outline-none focus:ring-2 ring-[#D4AF37] ${!home.siding ? 'text-slate-400 bg-slate-50' : 'text-slate-800 bg-white font-semibold'}`} value={home.siding} onChange={e => setHome({...home, siding: e.target.value})}>
-                    <option value="" disabled>Select Siding...</option>
-                    <option value="Brick">Brick</option>
-                    <option value="Clapboard">Clapboard</option>
-                    <option value="EFIS">EFIS</option>
-                    <option value="Hard Board">Hard Board</option>
-                    <option value="Masonite">Masonite</option>
-                    <option value="Smart Siding">Smart Siding</option>
-                    <option value="Stone/Masonry">Stone/Masonry</option>
-                    <option value="T-111">T-111</option>
-                  </select>
+                  {!farmNoDwelling && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <select className={`border p-3 rounded outline-none focus:ring-2 ring-[#D4AF37] ${!home.style ? 'text-slate-400 bg-slate-50' : 'text-slate-800 bg-white font-semibold'}`} value={home.style} onChange={e => setHome({...home, style: e.target.value})}>
+                        <option value="" disabled>Dwelling Style...</option>
+                        <option>Ranch</option><option>1.5 Story</option><option>2 Story</option><option>2.5 Story</option>
+                        <option>Bi Level</option><option>Tri Level</option><option>Half Duplex</option><option>Full Duplex</option><option>Other</option>
+                      </select>
+                      {home.style === 'Other' && <input placeholder="Describe Style..." className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.styleOther} onChange={e => setHome({...home, styleOther: e.target.value})} />}
+                      
+                      <select className={`border p-3 rounded outline-none focus:ring-2 ring-[#D4AF37] ${!home.siding ? 'text-slate-400 bg-slate-50' : 'text-slate-800 bg-white font-semibold'}`} value={home.siding} onChange={e => setHome({...home, siding: e.target.value})}>
+                        <option value="" disabled>Select Siding...</option>
+                        <option>Brick</option><option>Clapboard</option><option>EFIS</option><option>Hard Board</option>
+                        <option>Masonite</option><option>Metal Siding</option><option>Smart Siding</option><option>Stone/Masonry</option><option>T-111</option>
+                      </select>
 
-                  {/* Roof Dropdown */}
-                  <select className={`border p-3 rounded outline-none focus:ring-2 ring-[#D4AF37] ${!home.roofMaterial ? 'text-slate-400 bg-slate-50' : 'text-slate-800 bg-white font-semibold'}`} value={home.roofMaterial} onChange={e => setHome({...home, roofMaterial: e.target.value})}>
-                    <option value="" disabled>Select Roof...</option>
-                    <option value="Architectural Shingles">Architectural Shingles</option>
-                    <option value="Asphalt / 3 Tab Shingles">Asphalt / 3 Tab Shingles</option>
-                    <option value="Flat Roof">Flat Roof</option>
-                    <option value="Metal">Metal</option>
-                    <option value="Other">Other</option>
-                  </select>
+                      <select className={`border p-3 rounded outline-none focus:ring-2 ring-[#D4AF37] ${!home.roofMaterial ? 'text-slate-400 bg-slate-50' : 'text-slate-800 bg-white font-semibold'}`} value={home.roofMaterial} onChange={e => setHome({...home, roofMaterial: e.target.value})}>
+                        <option value="" disabled>Select Roof...</option>
+                        <option>Architectural Shingles</option><option>Asphalt / 3 Tab Shingles</option><option>Flat Roof</option><option>Metal</option><option>Other</option>
+                      </select>
+                      {home.roofMaterial === 'Other' && <input placeholder="Describe Roof..." className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.roofMaterialOther} onChange={e => setHome({...home, roofMaterialOther: e.target.value})} />}
 
-                  {/* Custom Roof Input (Only shows if 'Other' is selected) */}
-                  {home.roofMaterial === 'Other' && (
-                    <input placeholder="Describe Other Roof..." className="border p-3 rounded bg-slate-50 col-span-2 md:col-span-2 focus:ring-2 ring-[#D4AF37] outline-none" value={home.roofMaterialOther} onChange={e => setHome({...home, roofMaterialOther: e.target.value})} />
+                      <input placeholder="Square Footage" inputMode="numeric" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.sqft} onChange={e => setHome({...home, sqft: e.target.value})} />
+                      <input placeholder="Est. Replacement Cost" inputMode="numeric" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.replacementCost} onChange={e => setHome({...home, replacementCost: e.target.value})} />
+                      <input placeholder="Year Built / Age" inputMode="numeric" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.age} onChange={e => setHome({...home, age: e.target.value})} />
+                      
+                      <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
+                        <label className="text-xs text-slate-500 block font-semibold">Basement?</label>
+                        <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={home.basement} onChange={e => setHome({...home, basement: e.target.value})}><option>No</option><option>Yes</option></select>
+                      </div>
+                      <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
+                        <label className="text-xs text-slate-500 block font-semibold">Finished Bsmt?</label>
+                        <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={home.finishedBasement} onChange={e => setHome({...home, finishedBasement: e.target.value})}><option>No</option><option>Yes</option></select>
+                      </div>
+                      <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
+                        <label className="text-xs text-slate-500 block font-semibold">Wood Stove?</label>
+                        <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={home.woodStove} onChange={e => setHome({...home, woodStove: e.target.value})}><option>No</option><option>Yes</option></select>
+                      </div>
+                      <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
+                        <label className="text-xs text-slate-500 block font-semibold">Detached Struct?</label>
+                        <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={home.detached} onChange={e => setHome({...home, detached: e.target.value})}><option>No</option><option>Yes</option></select>
+                      </div>
+                      {home.detached === 'Yes' && <input placeholder="Describe detached structures..." className="border p-3 rounded bg-slate-50 col-span-2 md:col-span-4 focus:ring-2 ring-[#D4AF37] outline-none" value={home.detachedDesc} onChange={e => setHome({...home, detachedDesc: e.target.value})} />}
+
+                      <div className="col-span-2 md:col-span-4 mt-2">
+                        <p className="text-sm font-bold text-black mb-2">Updates Completed (Enter Years)</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                          <input placeholder="Electrical" className="border p-2 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.updateElec} onChange={e => setHome({...home, updateElec: e.target.value})} />
+                          <input placeholder="Plumbing" className="border p-2 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.updatePlumb} onChange={e => setHome({...home, updatePlumb: e.target.value})} />
+                          <input placeholder="HVAC" className="border p-2 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.updateHvac} onChange={e => setHome({...home, updateHvac: e.target.value})} />
+                          <input placeholder="Roof" className="border p-2 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.updateRoof} onChange={e => setHome({...home, updateRoof: e.target.value})} />
+                        </div>
+                      </div>
+                      <textarea placeholder="Additional Dwelling Notes..." className="border p-3 rounded bg-slate-50 col-span-2 md:col-span-4 h-20 focus:ring-2 ring-[#D4AF37] outline-none" value={home.notes} onChange={e => setHome({...home, notes: e.target.value})} />
+                    </div>
                   )}
-                  
-                  <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
-                    <label className="text-xs text-slate-500 block font-semibold">Basement?</label>
-                    <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={home.basement} onChange={e => setHome({...home, basement: e.target.value})}><option>No</option><option>Yes</option></select>
-                  </div>
-                  <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
-                    <label className="text-xs text-slate-500 block font-semibold">Finished Bsmt?</label>
-                    <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={home.finishedBasement} onChange={e => setHome({...home, finishedBasement: e.target.value})}><option>No</option><option>Yes</option></select>
-                  </div>
-                  <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
-                    <label className="text-xs text-slate-500 block font-semibold">Wood Stove?</label>
-                    <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={home.woodStove} onChange={e => setHome({...home, woodStove: e.target.value})}><option>No</option><option>Yes</option></select>
-                  </div>
-                  <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
-                    <label className="text-xs text-slate-500 block font-semibold">Detached Struct?</label>
-                    <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={home.detached} onChange={e => setHome({...home, detached: e.target.value})}><option>No</option><option>Yes</option></select>
-                  </div>
-                  {home.detached === 'Yes' && <input placeholder="Describe detached structures..." className="border p-3 rounded bg-slate-50 col-span-2 md:col-span-3 focus:ring-2 ring-[#D4AF37] outline-none" value={home.detachedDesc} onChange={e => setHome({...home, detachedDesc: e.target.value})} />}
+                </section>
+              )}
 
-                  <div className="col-span-2 md:col-span-4 mt-2">
-                    <p className="text-sm font-bold text-black mb-2">Updates Completed (Enter Years)</p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                      <input placeholder="Electrical" className="border p-2 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.updateElec} onChange={e => setHome({...home, updateElec: e.target.value})} />
-                      <input placeholder="Plumbing" className="border p-2 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.updatePlumb} onChange={e => setHome({...home, updatePlumb: e.target.value})} />
-                      <input placeholder="HVAC" className="border p-2 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.updateHvac} onChange={e => setHome({...home, updateHvac: e.target.value})} />
-                      <input placeholder="Roof" className="border p-2 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={home.updateRoof} onChange={e => setHome({...home, updateRoof: e.target.value})} />
+              {/* FARM OUTBUILDINGS */}
+              {selectedCats.includes('farm') && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-gray-400 shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
+                    <span className="flex items-center gap-2"><Home className="w-6 h-6 text-[#D4AF37]" /> Farm Outbuildings</span>
+                    <button onClick={() => addListItem(setFarmOutbuildings, farmOutbuildings, { structureType: '', structureOther: '', construction: '', constructionOther: '', flooring: '', siding: '', roof: '', roofAge: '', style: '', value: '', coverage: 'ACV' })} className="text-xs bg-gray-100 border border-gray-300 px-3 py-2 rounded-full font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all">+ Add Structure</button>
+                  </h2>
+                  {farmOutbuildings.map((o, i) => (
+                    <div key={i} className="bg-gray-50 p-4 rounded-lg mb-4 relative border border-gray-200">
+                      <button onClick={() => removeListItem(setFarmOutbuildings, farmOutbuildings, i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-5 h-5"/></button>
+                      <h3 className="font-bold text-gray-500 mb-3 text-sm uppercase">Structure {i+1}</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <select className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={o.structureType} onChange={e => updateListItem(setFarmOutbuildings, farmOutbuildings, i, 'structureType', e.target.value)}>
+                          <option value="" disabled>Structure Type...</option>
+                          <option>Shop</option><option>Machinery Storage</option><option>Livestock Building</option><option>Hobby Storage</option><option>Grain Bin</option><option>Other</option>
+                        </select>
+                        {o.structureType === 'Other' && <input placeholder="Describe Structure..." className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={o.structureOther} onChange={e => updateListItem(setFarmOutbuildings, farmOutbuildings, i, 'structureOther', e.target.value)} />}
+                        
+                        <select className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={o.construction} onChange={e => updateListItem(setFarmOutbuildings, farmOutbuildings, i, 'construction', e.target.value)}>
+                          <option value="" disabled>Construction...</option>
+                          <option>Post Frame</option><option>Stick Frame</option><option>Metal Frame</option><option>Quonset</option><option>Other</option>
+                        </select>
+                        {o.construction === 'Other' && <input placeholder="Describe Const..." className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={o.constructionOther} onChange={e => updateListItem(setFarmOutbuildings, farmOutbuildings, i, 'constructionOther', e.target.value)} />}
+
+                        <select className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={o.flooring} onChange={e => updateListItem(setFarmOutbuildings, farmOutbuildings, i, 'flooring', e.target.value)}>
+                          <option value="" disabled>Flooring...</option><option>Concrete</option><option>Dirt</option><option>Gravel</option><option>Other</option>
+                        </select>
+                        <select className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={o.siding} onChange={e => updateListItem(setFarmOutbuildings, farmOutbuildings, i, 'siding', e.target.value)}>
+                          <option value="" disabled>Siding...</option><option>Metal</option><option>Wood</option><option>Other</option>
+                        </select>
+                        <select className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={o.roof} onChange={e => updateListItem(setFarmOutbuildings, farmOutbuildings, i, 'roof', e.target.value)}>
+                          <option value="" disabled>Roof Material...</option><option>Metal</option><option>Asphalt Shingle</option><option>Wood</option><option>Other</option>
+                        </select>
+                        <input placeholder="Roof Age (Years)" inputMode="numeric" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={o.roofAge} onChange={e => updateListItem(setFarmOutbuildings, farmOutbuildings, i, 'roofAge', e.target.value)} />
+                        
+                        <select className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none col-span-2" value={o.style} onChange={e => updateListItem(setFarmOutbuildings, farmOutbuildings, i, 'style', e.target.value)}>
+                          <option value="" disabled>Enclosure Style...</option><option>Fully Enclosed</option><option>1 Open Side</option><option>2 Open Sides</option><option>4 Open Sides</option>
+                        </select>
+                        <input placeholder="Value / Rep Cost" type="number" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={o.value} onChange={e => updateListItem(setFarmOutbuildings, farmOutbuildings, i, 'value', e.target.value)} />
+                        <select className="border p-2 rounded font-bold focus:ring-2 ring-[#D4AF37] outline-none" value={o.coverage} onChange={e => updateListItem(setFarmOutbuildings, farmOutbuildings, i, 'coverage', e.target.value)}>
+                          <option>ACV</option><option>Full Replacement Cost</option>
+                        </select>
+                      </div>
                     </div>
-                  </div>
-                  <textarea placeholder="Additional Home Notes..." className="border p-3 rounded bg-slate-50 col-span-2 md:col-span-4 h-20 focus:ring-2 ring-[#D4AF37] outline-none" value={home.notes} onChange={e => setHome({...home, notes: e.target.value})} />
-                </div>
-              </section>
+                  ))}
+                </section>
+              )}
 
-              <section>
-                <h2 className="text-xl font-bold border-b pb-2 mb-4 flex items-center gap-2 text-black"><FileText className="w-6 h-6 text-[#D4AF37]" /> Cross-Sell & Overall Notes</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input placeholder="Term Life Interests/Notes" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={crossSell.termLife} onChange={e => setCrossSell({...crossSell, termLife: e.target.value})} />
-                  <input placeholder="Motorcycle / ATV / Boats" className="border p-3 rounded bg-slate-50 focus:ring-2 ring-[#D4AF37] outline-none" value={crossSell.powersports} onChange={e => setCrossSell({...crossSell, powersports: e.target.value})} />
-                  <textarea placeholder="Account-level notes, concerns, budget..." className="border p-3 rounded bg-slate-50 md:col-span-2 h-24 focus:ring-2 ring-[#D4AF37] outline-none" value={overallNotes} onChange={e => setOverallNotes(e.target.value)} />
+              {/* FARM SCHEDULED PROPERTY */}
+              {selectedCats.includes('farm') && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
+                    <span className="flex items-center gap-2"><Tractor className="w-6 h-6 text-[#D4AF37]" /> Scheduled Farm Property</span>
+                    <button onClick={() => addListItem(setFarmProperty, farmProperty, { desc: '', year: '', make: '', model: '', serial: '', value: '' })} className="text-xs bg-gray-100 border border-gray-300 px-3 py-2 rounded-full font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all">+ Add Equipment</button>
+                  </h2>
+                  {farmProperty.map((p, i) => (
+                    <div key={i} className="grid grid-cols-2 md:grid-cols-6 gap-3 bg-gray-50 p-4 rounded-lg mb-3 relative border border-gray-200">
+                      <button onClick={() => removeListItem(setFarmProperty, farmProperty, i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-4 h-4"/></button>
+                      <input placeholder="Item Description" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none col-span-2 md:col-span-6 mt-4" value={p.desc} onChange={e => updateListItem(setFarmProperty, farmProperty, i, 'desc', e.target.value)} />
+                      <input placeholder="Year" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={p.year} onChange={e => updateListItem(setFarmProperty, farmProperty, i, 'year', e.target.value)} />
+                      <input placeholder="Make" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={p.make} onChange={e => updateListItem(setFarmProperty, farmProperty, i, 'make', e.target.value)} />
+                      <input placeholder="Model" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none col-span-2" value={p.model} onChange={e => updateListItem(setFarmProperty, farmProperty, i, 'model', e.target.value)} />
+                      <input placeholder="Serial #" className="border p-2 rounded font-mono focus:ring-2 ring-[#D4AF37] outline-none col-span-2 md:col-span-3" value={p.serial} onChange={e => updateListItem(setFarmProperty, farmProperty, i, 'serial', e.target.value)} />
+                      <input placeholder="Value ($)" type="number" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none col-span-2 md:col-span-3" value={p.value} onChange={e => updateListItem(setFarmProperty, farmProperty, i, 'value', e.target.value)} />
+                    </div>
+                  ))}
+                </section>
+              )}
+
+              {/* PERSONAL AUTO */}
+              {selectedCats.includes('auto') && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
+                    <span className="flex items-center gap-2"><Car className="w-6 h-6 text-[#D4AF37]" /> Personal Auto Vehicles</span>
+                    <button onClick={() => addVehicle(setVehicles, vehicles)} className="text-xs bg-gray-100 border border-gray-300 px-3 py-2 rounded-full font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all">+ Add Auto</button>
+                  </h2>
+                  {vehicles.map((v, i) => (
+                    <div key={i} className="bg-gray-50 p-4 rounded-lg mb-4 relative border border-gray-200">
+                      {i > 0 && <button onClick={() => removeListItem(setVehicles, vehicles, i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-5 h-5"/></button>}
+                      {renderVehicleFields(v, i, setVehicles, vehicles, false)}
+                    </div>
+                  ))}
+                </section>
+              )}
+
+              {/* COMMERCIAL AUTO */}
+              {selectedCats.includes('commauto') && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
+                    <span className="flex items-center gap-2"><Truck className="w-6 h-6 text-[#D4AF37]" /> Commercial Auto Vehicles</span>
+                    <button onClick={() => addVehicle(setCommAutoVehicles, commAutoVehicles)} className="text-xs bg-gray-100 border border-gray-300 px-3 py-2 rounded-full font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all">+ Add Comm Auto</button>
+                  </h2>
+                  {commAutoVehicles.map((v, i) => (
+                    <div key={i} className="bg-gray-50 p-4 rounded-lg mb-4 relative border border-gray-200">
+                      <button onClick={() => removeListItem(setCommAutoVehicles, commAutoVehicles, i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-5 h-5"/></button>
+                      {renderVehicleFields(v, i, setCommAutoVehicles, commAutoVehicles, true)}
+                    </div>
+                  ))}
+                </section>
+              )}
+
+              {/* CAMPER SECTION */}
+              {selectedCats.includes('camper') && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
+                    <span className="flex items-center gap-2"><Truck className="w-6 h-6 text-[#D4AF37]" /> Campers / RVs</span>
+                    <button onClick={() => addListItem(setCamperVehicles, camperVehicles, { year: '', make: '', model: '', vin: '', length: '', style: '', slides: '', value: '', carrier: '', premium: '', coverage: 'Liability Only', deductible: '' })} className="text-xs bg-gray-100 border border-gray-300 px-3 py-2 rounded-full font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all">+ Add Camper</button>
+                  </h2>
+                  {camperVehicles.map((v, i) => (
+                    <div key={i} className="bg-gray-50 p-4 rounded-lg mb-4 relative border border-gray-200">
+                      <button onClick={() => removeListItem(setCamperVehicles, camperVehicles, i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-5 h-5"/></button>
+                      <input placeholder="VIN" className="border p-2 rounded w-full mb-3 uppercase font-mono mt-4 focus:ring-2 ring-[#D4AF37] outline-none" value={v.vin} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'vin', e.target.value)} />
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                        <input placeholder="Year" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.year} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'year', e.target.value)} />
+                        <input placeholder="Make" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.make} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'make', e.target.value)} />
+                        <input placeholder="Model" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.model} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'model', e.target.value)} />
+                        <select className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none bg-white" value={v.style} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'style', e.target.value)}>
+                          <option value="" disabled>Select Style...</option><option>Bumper Pull</option><option>Fifth Wheel</option><option>Goose Neck</option><option>Motorhome</option><option>Other</option>
+                        </select>
+                        <input placeholder="Length (ft)" inputMode="numeric" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.length} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'length', e.target.value)} />
+                        <input placeholder="# of Slides" inputMode="numeric" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.slides} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'slides', e.target.value)} />
+                        <input placeholder="Value ($)" type="number" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.value} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'value', e.target.value)} />
+                        <select className="border p-2 rounded font-bold focus:ring-2 ring-[#D4AF37] outline-none bg-white" value={v.coverage} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'coverage', e.target.value)}>
+                          <option>Liability Only</option><option>Full Coverage</option>
+                        </select>
+                      </div>
+                      {v.coverage === 'Full Coverage' && (
+                        <div className="mb-3 bg-yellow-50 p-2 rounded border border-[#D4AF37]/50">
+                          <label className="text-xs font-bold text-black block mb-1">Comp/Coll Deductible:</label>
+                          <select className="border p-2 rounded w-full bg-white font-semibold focus:ring-2 ring-[#D4AF37] outline-none" value={v.deductible} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'deductible', e.target.value)}>
+                            <option value="" disabled>Select Deductible...</option>
+                            {DEDUCTIBLES.map(d => <option key={d} value={d}>{d}</option>)}
+                          </select>
+                        </div>
+                      )}
+                      <div className="grid grid-cols-2 gap-3 pt-3 border-t">
+                        <input placeholder="Current Carrier" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.carrier} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'carrier', e.target.value)} />
+                        <input placeholder="Premium ($)" type="number" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.premium} onChange={e => updateListItem(setCamperVehicles, camperVehicles, i, 'premium', e.target.value)} />
+                      </div>
+                    </div>
+                  ))}
+                </section>
+              )}
+
+              {/* CYCLE SECTION */}
+              {selectedCats.includes('cycle') && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
+                    <span className="flex items-center gap-2"><Bike className="w-6 h-6 text-[#D4AF37]" /> Motorcycle / ATV</span>
+                    <button onClick={() => addListItem(setCycleVehicles, cycleVehicles, {vin: '', year: '', make: '', model: '', cc: '', coverage: 'Liability Only', deductible: ''})} className="text-xs bg-gray-100 border border-gray-300 px-3 py-2 rounded-full font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all">+ Add Unit</button>
+                  </h2>
+                  {cycleVehicles.map((v, i) => (
+                    <div key={i} className="bg-gray-50 p-4 rounded-lg mb-4 relative border border-gray-200">
+                      <button onClick={() => removeListItem(setCycleVehicles, cycleVehicles, i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-5 h-5"/></button>
+                      <input placeholder="VIN" className="border p-2 rounded w-full mb-3 uppercase font-mono mt-4 focus:ring-2 ring-[#D4AF37] outline-none" value={v.vin} onChange={e => updateListItem(setCycleVehicles, cycleVehicles, i, 'vin', e.target.value)} />
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                        <input placeholder="Year" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.year} onChange={e => updateListItem(setCycleVehicles, cycleVehicles, i, 'year', e.target.value)} />
+                        <input placeholder="Make" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.make} onChange={e => updateListItem(setCycleVehicles, cycleVehicles, i, 'make', e.target.value)} />
+                        <input placeholder="Model" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.model} onChange={e => updateListItem(setCycleVehicles, cycleVehicles, i, 'model', e.target.value)} />
+                        <input placeholder="Engine (CC)" inputMode="numeric" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.cc} onChange={e => updateListItem(setCycleVehicles, cycleVehicles, i, 'cc', e.target.value)} />
+                        <select className="border p-2 rounded font-bold col-span-2 focus:ring-2 ring-[#D4AF37] outline-none bg-white" value={v.coverage} onChange={e => updateListItem(setCycleVehicles, cycleVehicles, i, 'coverage', e.target.value)}>
+                          <option>Liability Only</option><option>Full Coverage</option>
+                        </select>
+                        {v.coverage === 'Full Coverage' && (
+                          <div className="col-span-2 bg-yellow-50 p-2 rounded border border-[#D4AF37]/50">
+                            <label className="text-xs font-bold text-black block mb-1">Deductible:</label>
+                            <select className="border p-2 rounded w-full bg-white font-semibold focus:ring-2 ring-[#D4AF37] outline-none" value={v.deductible} onChange={e => updateListItem(setCycleVehicles, cycleVehicles, i, 'deductible', e.target.value)}>
+                              <option value="" disabled>Select Deductible...</option>
+                              {DEDUCTIBLES.map(d => <option key={d} value={d}>{d}</option>)}
+                            </select>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </section>
+              )}
+
+              {/* WATERCRAFT SECTION */}
+              {selectedCats.includes('watercraft') && (
+                <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
+                  <h2 className="text-xl font-bold mb-4 flex items-center justify-between text-black">
+                    <span className="flex items-center gap-2"><Anchor className="w-6 h-6 text-[#D4AF37]" /> Watercraft</span>
+                    <button onClick={() => addListItem(setWatercraft, watercraft, { year: '', make: '', model: '', hullId: '', material: '', materialOther: '', motorMake: '', hp: '', value: '', coverage: 'Liability Only', deductible: '' })} className="text-xs bg-gray-100 border border-gray-300 px-3 py-2 rounded-full font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] transition-all">+ Add Boat</button>
+                  </h2>
+                  {watercraft.map((v, i) => (
+                    <div key={i} className="bg-gray-50 p-4 rounded-lg mb-4 relative border border-gray-200">
+                      <button onClick={() => removeListItem(setWatercraft, watercraft, i)} className="absolute top-2 right-2 text-red-500 hover:text-red-700"><Trash2 className="w-5 h-5"/></button>
+                      <input placeholder="Hull ID" className="border p-2 rounded w-full mb-3 uppercase font-mono mt-4 focus:ring-2 ring-[#D4AF37] outline-none" value={v.hullId} onChange={e => updateListItem(setWatercraft, watercraft, i, 'hullId', e.target.value)} />
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                        <input placeholder="Year" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.year} onChange={e => updateListItem(setWatercraft, watercraft, i, 'year', e.target.value)} />
+                        <input placeholder="Make" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.make} onChange={e => updateListItem(setWatercraft, watercraft, i, 'make', e.target.value)} />
+                        <input placeholder="Model" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.model} onChange={e => updateListItem(setWatercraft, watercraft, i, 'model', e.target.value)} />
+                        
+                        <div className="flex flex-col gap-1">
+                          <select className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none bg-white" value={v.material} onChange={e => updateListItem(setWatercraft, watercraft, i, 'material', e.target.value)}>
+                            <option value="" disabled>Hull Material...</option><option>Aluminum</option><option>Fiberglass</option><option>Wood</option><option>Other</option>
+                          </select>
+                          {v.material === 'Other' && <input placeholder="Describe Material..." className="border p-2 rounded text-sm focus:ring-2 ring-[#D4AF37] outline-none" value={v.materialOther} onChange={e => updateListItem(setWatercraft, watercraft, i, 'materialOther', e.target.value)} />}
+                        </div>
+
+                        <input placeholder="Motor Make" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.motorMake} onChange={e => updateListItem(setWatercraft, watercraft, i, 'motorMake', e.target.value)} />
+                        <input placeholder="Horse Power" inputMode="numeric" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.hp} onChange={e => updateListItem(setWatercraft, watercraft, i, 'hp', e.target.value)} />
+                        <input placeholder="Value ($)" type="number" className="border p-2 rounded focus:ring-2 ring-[#D4AF37] outline-none" value={v.value} onChange={e => updateListItem(setWatercraft, watercraft, i, 'value', e.target.value)} />
+                        <select className="border p-2 rounded font-bold focus:ring-2 ring-[#D4AF37] outline-none bg-white" value={v.coverage} onChange={e => updateListItem(setWatercraft, watercraft, i, 'coverage', e.target.value)}>
+                          <option>Liability Only</option><option>Full Coverage</option>
+                        </select>
+                      </div>
+                      {v.coverage === 'Full Coverage' && (
+                        <div className="mb-3 bg-yellow-50 p-2 rounded border border-[#D4AF37]/50">
+                          <label className="text-xs font-bold text-black block mb-1">Comp/Coll Deductible:</label>
+                          <select className="border p-2 rounded w-full bg-white font-semibold focus:ring-2 ring-[#D4AF37] outline-none" value={v.deductible} onChange={e => updateListItem(setWatercraft, watercraft, i, 'deductible', e.target.value)}>
+                            <option value="" disabled>Select Deductible...</option>
+                            {DEDUCTIBLES.map(d => <option key={d} value={d}>{d}</option>)}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </section>
+              )}
+
+              {/* NOTES & BOTTOM ADDITIONS */}
+              <section className="bg-gray-100 p-6 rounded-xl border border-gray-300">
+                <h2 className="text-lg font-bold mb-4 text-black uppercase tracking-tight">Overall Notes & Additional Lines</h2>
+                <textarea 
+                  placeholder="Enter any additional context, account concerns, or specific carrier requests here..." 
+                  className="w-full border p-3 rounded h-24 mb-6 focus:ring-2 ring-[#D4AF37] outline-none bg-white" 
+                  value={overallNotes} 
+                  onChange={e => setOverallNotes(e.target.value)} 
+                />
+                
+                <p className="text-sm font-bold text-gray-500 mb-3 uppercase">Add another Line of Business to this quote:</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2">
+                  {CATEGORIES.filter(c => !selectedCats.includes(c.id)).map(cat => (
+                    <button 
+                      key={cat.id} 
+                      onClick={() => toggleCategory(cat.id)}
+                      className="flex flex-col items-center gap-1 p-3 bg-white border border-gray-200 rounded-lg hover:border-[#D4AF37] hover:shadow-md transition-all text-[10px] font-bold text-gray-700 uppercase"
+                    >
+                      <cat.icon className="w-5 h-5 text-gray-400" />
+                      {cat.label}
+                    </button>
+                  ))}
                 </div>
               </section>
             </div>
@@ -532,8 +876,8 @@
                   </pre>
                 </div>
                 <div className="p-4 border-t bg-gray-50 rounded-b-xl flex flex-col md:flex-row justify-end gap-3">
-                  <button onClick={copyToClipboard} className="px-4 py-2 text-black bg-white font-bold hover:bg-yellow-50 rounded border border-gray-300 md:mr-auto transition-colors">Copy to Clipboard</button>
-                  <button onClick={() => setShowSummary(false)} className="px-4 py-2 text-slate-600 font-bold hover:bg-slate-200 rounded transition-colors">Edit Data</button>
+                  <button onClick={() => setAlertMsg('Copying logic running... Check your clipboard.')} className="px-4 py-2 text-black bg-white font-bold hover:bg-yellow-50 rounded border border-gray-300 md:mr-auto transition-colors">Copy Summary</button>
+                  <button onClick={() => setShowSummary(false)} className="px-4 py-2 text-slate-600 font-bold hover:bg-slate-200 rounded transition-colors">Go Back</button>
                   <button onClick={sendViaEmail} className="bg-[#D4AF37] hover:bg-[#C5A017] text-black px-6 py-2 rounded font-extrabold flex items-center justify-center gap-2 shadow-md transition-colors">
                     <Mail className="w-5 h-5"/> Send via Email
                   </button>
