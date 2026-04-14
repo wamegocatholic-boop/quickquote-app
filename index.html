@@ -107,6 +107,10 @@
       appId: "1:176442706897:web:6c5510cb4bc57317afeef0"
     };
 
+    // !!! CONFIGURE YOUR EMAILS HERE !!!
+    const AUTOMATION_EMAIL = "zteske@fumainsurance.com"; 
+    const CSR_EMAIL = "office.ks@fumainsurance.com";
+
     const App = () => {
       const [appStep, setAppStep] = useState('selection'); // 'selection', 'entry', 'success'
       const [selectedCats, setSelectedCats] = useState([]);
@@ -488,7 +492,7 @@
         return text;
       };
 
-      // --- NEW: FIREBASE DATABASE SUBMISSION ---
+      // --- SECURE FIREBASE SUBMISSION WITH CC LOGIC ---
       const submitToDatabase = async () => {
         if (!insured.last1 || !insured.first1) {
           setAlertMsg("Please fill out at least the Primary Insured's First and Last Name.");
@@ -502,34 +506,31 @@
 
         setIsSubmitting(true);
 
+        let folderNameStr = `${insured.last1}, ${insured.first1}`;
+        if (insured.first2) {
+          folderNameStr += ` & ${insured.first2}`;
+        }
+
         try {
           const { collection, addDoc, serverTimestamp } = window.FirebaseAPI;
           const db = window.dbInstance;
 
-          // Package all the app data
+          // Package the payload specifically for the Firebase Trigger Email Extension
           const payload = {
+            to: AUTOMATION_EMAIL,
+            cc: CSR_EMAIL, // This permanently routes a copy to the VA!
+            message: {
+              subject: `[QuickQuote] ${folderNameStr}`,
+              text: generateSummaryText()
+            },
+            // Metadata for your records
             timestamp: serverTimestamp(),
             categories: selectedCats,
-            clientName: `${insured.first1} ${insured.last1}`,
-            insured,
-            inspection,
-            drivers,
-            vehicles,
-            cycleVehicles,
-            camperVehicles,
-            watercraft,
-            commAutoVehicles,
-            home,
-            farm: { farmNoDwelling, farmLocations, farmOutbuildings, farmProperty },
-            business,
-            wcCodes,
-            life,
-            overallNotes,
-            summaryText: generateSummaryText() // We save the text block too so it's easy to copy/paste from the DB later!
+            clientName: folderNameStr
           };
 
-          // Write to Firestore (creates a 'submissions' collection inside the safe artifacts path)
-          const submissionsRef = collection(db, 'artifacts', 'QuickQuote', 'public', 'data', 'submissions');
+          // Drop data into the exact 'mail' collection the extension is listening to
+          const submissionsRef = collection(db, 'artifacts', 'QuickQuote', 'public', 'data', 'mail');
           await addDoc(submissionsRef, payload);
 
           // Success! Show Thank You screen
