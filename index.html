@@ -141,11 +141,16 @@
       const [showSummary, setShowSummary] = useState(false);
       const [alertMsg, setAlertMsg] = useState('');
 
+      // Autocomplete state
       const [addressSuggestions, setAddressSuggestions] = useState([]);
       const [showSuggestions, setShowSuggestions] = useState(false);
       const [detectedCounty, setDetectedCounty] = useState(''); 
       const [addressQuery, setAddressQuery] = useState(''); 
+      const [activeAddressField, setActiveAddressField] = useState(null); // 'primary', 'location', 'current'
+
       const suggestionRef = useRef(null);
+      const locationRef = useRef(null);
+      const currentAddressRef = useRef(null);
       const naicsRef = useRef(null);
 
       // --- URL Parameter Logic (Client Shareable Link) ---
@@ -161,7 +166,12 @@
       // --- Effects & Lookups ---
       useEffect(() => {
         const handleClickOutside = (event) => {
-          if (suggestionRef.current && !suggestionRef.current.contains(event.target)) setShowSuggestions(false);
+          if (suggestionRef.current && !suggestionRef.current.contains(event.target) &&
+              locationRef.current && !locationRef.current.contains(event.target) &&
+              currentAddressRef.current && !currentAddressRef.current.contains(event.target)) {
+            setShowSuggestions(false);
+            setActiveAddressField(null);
+          }
           if (naicsRef.current && !naicsRef.current.contains(event.target)) setShowNaicsList(false);
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -190,21 +200,39 @@
         return () => { clearTimeout(timeoutId); controller.abort(); };
       }, [addressQuery]);
 
-      const handleAddressChange = (e) => {
+      const handleAddressChange = (e, fieldName) => {
         const query = e.target.value;
-        setInsured({ ...insured, address: query });
         setAddressQuery(query);
+        setActiveAddressField(fieldName);
+        
+        if (fieldName === 'primary') {
+          setInsured({ ...insured, address: query });
+        } else if (fieldName === 'location') {
+          setInspection({ ...inspection, location: query });
+        } else if (fieldName === 'current') {
+          setInspection({ ...inspection, currentAddress: query });
+        }
       };
 
       const handleSelectAddress = (item) => {
-        setInsured({ ...insured, address: item.display_name });
-        setShowSuggestions(false);
-        setHome({ ...home, address: item.display_name });
-        if (item.address && item.address.county) {
-          setDetectedCounty(item.address.county.replace(' County', '').trim());
-        } else {
-          setDetectedCounty('');
+        const name = item.display_name;
+        
+        if (activeAddressField === 'primary') {
+          setInsured({ ...insured, address: name });
+          setHome({ ...home, address: name });
+          if (item.address && item.address.county) {
+            setDetectedCounty(item.address.county.replace(' County', '').trim());
+          } else {
+            setDetectedCounty('');
+          }
+        } else if (activeAddressField === 'location') {
+          setInspection({ ...inspection, location: name });
+        } else if (activeAddressField === 'current') {
+          setInspection({ ...inspection, currentAddress: name });
         }
+        
+        setShowSuggestions(false);
+        setActiveAddressField(null);
       };
 
       const handleRealtorLookup = () => {
@@ -269,6 +297,12 @@
         return v;
       };
 
+      const formatCurrency = (val) => {
+        const num = val.replace(/\D/g, '');
+        if (!num) return '';
+        return '$' + parseInt(num, 10).toLocaleString('en-US');
+      };
+
       // --- Handlers ---
       const addDriver = () => setDrivers([...drivers, { first: '', last: '', dob: '', dl: '', dlState: 'KS', phone: '' }]);
       const removeDriver = (index) => setDrivers(drivers.filter((_, i) => i !== index));
@@ -306,7 +340,7 @@
         text += `Categories: ${selectedCats.map(id => CATEGORIES.find(c => c.id === id)?.label).join(', ')}\n\n`;
 
         if (selectedCats.includes('inspection')) {
-          text += `[INSPECTION CLIENT INFO]\nLoc Purchased: ${inspection.location} | Current Addr: ${inspection.currentAddress}\nClosing Date: ${inspection.closingDate} | Purchase Price: $${inspection.price}\nRoof Age: ${inspection.roofAge} | Mortgage: ${inspection.mortgage}\n\n`;
+          text += `[INSPECTION CLIENT INFO]\nLoc Purchased: ${inspection.location} | Current Addr: ${inspection.currentAddress}\nClosing Date: ${inspection.closingDate} | Purchase Price: ${inspection.price}\nYear Roof Replaced: ${inspection.roofAge} | Mortgage: ${inspection.mortgage}\n\n`;
         }
 
         text += `[NAMED INSUREDS]\n1: ${insured.first1} ${insured.last1} | DOB: ${insured.dob1} | DL: ${insured.dl1} (${insured.dlState1}) | SSN: ${insured.ssn1}\n`;
@@ -557,13 +591,46 @@
                   <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
                     <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><Clipboard className="w-6 h-6 text-[#D4AF37]" /> Inspection Details</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <input placeholder="Location Being Purchased" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-1 md:col-span-2" value={inspection.location} onChange={e => setInspection({...inspection, location: e.target.value})} />
-                      <input placeholder="Current Address (Where you most recently lived)" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none col-span-1 md:col-span-2" value={inspection.currentAddress} onChange={e => setInspection({...inspection, currentAddress: e.target.value})} />
                       
-                      <input placeholder="Approximate Closing Date" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={inspection.closingDate} onChange={e => setInspection({...inspection, closingDate: e.target.value})} />
-                      <input placeholder="Purchase Price ($)" type="number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={inspection.price} onChange={e => setInspection({...inspection, price: e.target.value})} />
+                      <div className="relative col-span-1 md:col-span-2" ref={locationRef}>
+                        <label className="text-xs text-slate-500 block font-semibold mb-1 uppercase">Location Being Purchased</label>
+                        <input placeholder="Start typing address..." className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={inspection.location} onChange={e => handleAddressChange(e, 'location')} />
+                        {showSuggestions && activeAddressField === 'location' && addressSuggestions.length > 0 && (
+                          <ul className="absolute z-10 w-full bg-white border border-slate-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                            {addressSuggestions.map((item, idx) => (
+                              <li key={idx} onClick={() => handleSelectAddress(item)} className="p-3 hover:bg-yellow-50 cursor-pointer border-b last:border-b-0 text-sm text-slate-700">{item.display_name}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+
+                      <div className="relative col-span-1 md:col-span-2" ref={currentAddressRef}>
+                        <label className="text-xs text-slate-500 block font-semibold mb-1 uppercase">Current Address (Where you most recently lived)</label>
+                        <input placeholder="Start typing address..." className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full" value={inspection.currentAddress} onChange={e => handleAddressChange(e, 'current')} />
+                        {showSuggestions && activeAddressField === 'current' && addressSuggestions.length > 0 && (
+                          <ul className="absolute z-10 w-full bg-white border border-slate-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+                            {addressSuggestions.map((item, idx) => (
+                              <li key={idx} onClick={() => handleSelectAddress(item)} className="p-3 hover:bg-yellow-50 cursor-pointer border-b last:border-b-0 text-sm text-slate-700">{item.display_name}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                       
-                      <input placeholder="Age of Roof (Years)" inputMode="numeric" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={inspection.roofAge} onChange={e => setInspection({...inspection, roofAge: e.target.value})} />
+                      <div className="flex flex-col">
+                        <label className="text-xs text-slate-500 block font-semibold mb-1 uppercase">Approximate Closing Date</label>
+                        <input type="date" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={inspection.closingDate} onChange={e => setInspection({...inspection, closingDate: e.target.value})} />
+                      </div>
+
+                      <div className="flex flex-col">
+                        <label className="text-xs text-slate-500 block font-semibold mb-1 uppercase">Purchase Price</label>
+                        <input type="text" inputMode="numeric" placeholder="$0" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={inspection.price} onChange={e => setInspection({...inspection, price: formatCurrency(e.target.value)})} />
+                      </div>
+                      
+                      <div className="flex flex-col">
+                        <label className="text-xs text-slate-500 block font-semibold mb-1 uppercase">Year Roof Most Recently Replaced</label>
+                        <input inputMode="numeric" maxLength="4" placeholder="YYYY" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={inspection.roofAge} onChange={e => setInspection({...inspection, roofAge: e.target.value})} />
+                      </div>
+
                       <div className="border p-2 rounded bg-slate-50 focus-within:ring-2 ring-[#D4AF37]">
                         <label className="text-xs text-slate-500 block font-semibold">Will there be a mortgage on property?</label>
                         <select className="w-full bg-transparent font-semibold mt-1 outline-none cursor-pointer" value={inspection.mortgage} onChange={e => setInspection({...inspection, mortgage: e.target.value})}>
@@ -676,8 +743,8 @@
                   <section className="bg-white p-4 rounded-lg border-l-4 border-black shadow-sm border border-gray-100">
                     <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black"><MapPin className="w-6 h-6 text-[#D4AF37]" /> Household / Primary Address</h2>
                     <div className="relative" ref={suggestionRef}>
-                      <input placeholder="Start typing address..." className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full font-medium" value={insured.address} onChange={handleAddressChange} />
-                      {showSuggestions && addressSuggestions.length > 0 && (
+                      <input placeholder="Start typing address..." className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none w-full font-medium" value={insured.address} onChange={e => handleAddressChange(e, 'primary')} />
+                      {showSuggestions && activeAddressField === 'primary' && addressSuggestions.length > 0 && (
                         <ul className="absolute z-10 w-full bg-white border border-slate-200 mt-1 rounded-lg shadow-xl max-h-60 overflow-y-auto">
                           {addressSuggestions.map((item, idx) => (
                             <li key={idx} onClick={() => handleSelectAddress(item)} className="p-3 hover:bg-yellow-50 cursor-pointer border-b last:border-b-0 text-sm text-slate-700">{item.display_name}</li>
