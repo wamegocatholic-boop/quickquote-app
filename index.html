@@ -138,7 +138,10 @@
 
       const [life, setLife] = useState({ amount: '', term: '', healthNotes: '' });
       const [overallNotes, setOverallNotes] = useState('');
+      
+      // UI Modals State
       const [showSummary, setShowSummary] = useState(false);
+      const [showClearConfirm, setShowClearConfirm] = useState(false);
       const [alertMsg, setAlertMsg] = useState('');
 
       // Autocomplete state
@@ -285,7 +288,36 @@
         window.location.href = `sms:${smsInfo.phone}${sep}body=${encodeURIComponent(message)}`;
       };
 
-      // --- Utils ---
+      // --- Form Actions ---
+      const clearAllFields = () => {
+        setInsured({ first1: '', last1: '', ssn1: '', dob1: '', dl1: '', dlState1: 'KS', phone1: '', email1: '', address: '', first2: '', last2: '', ssn2: '', dob2: '', dl2: '', dlState2: 'KS', phone2: '', email2: '' });
+        setInspection({ location: '', currentAddress: '', closingDate: '', price: '', roofAge: '', mortgage: 'Yes', autoBundle: 'No' });
+        setDrivers([]);
+        setVehicles([{ vin: '', year: '', make: '', model: '', coverage: 'Liability Only', deductible: '' }]);
+        setCycleVehicles([]);
+        setCamperVehicles([]);
+        setWatercraft([]);
+        setCommAutoVehicles([]);
+        setFarmNoDwelling(false);
+        setFarmLocations([]);
+        setFarmOutbuildings([]);
+        setFarmProperty([]);
+        setHome({ address: '', sqft: '', replacementCost: '', style: '', styleOther: '', basement: 'No', finishedBasement: 'No', woodStove: 'No', detached: 'No', detachedDesc: '', age: '', mortgage: 'Yes', siding: '', updateElec: '', updatePlumb: '', updateHvac: '', updateRoof: '', roofMaterial: '', roofMaterialOther: '', notes: '' });
+        setBusiness({ name: '', entity: '', fein: '', yearStarted: '', address: '', operations: '', employeesFt: '', employeesPt: '', payroll: '', income: '', classCode: '', losses: '', carrier: '', premium: '', renewalDate: '' });
+        setWcCodes([]);
+        setLife({ amount: '', term: '', healthNotes: '' });
+        setOverallNotes('');
+        setSelectedCats([]);
+        setAppStep('selection');
+        setShowClearConfirm(false);
+        
+        // If in client mode, ensure we go back to the single inspection form instead of category menu
+        if (isClientMode) {
+          setSelectedCats(['inspection']);
+          setAppStep('entry');
+        }
+      };
+
       const toggleCategory = (id) => {
         setSelectedCats(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
       };
@@ -303,7 +335,6 @@
         return '$' + parseInt(num, 10).toLocaleString('en-US');
       };
 
-      // --- Handlers ---
       const addDriver = () => setDrivers([...drivers, { first: '', last: '', dob: '', dl: '', dlState: 'KS', phone: '' }]);
       const removeDriver = (index) => setDrivers(drivers.filter((_, i) => i !== index));
       const updateDriver = (index, field, value) => {
@@ -560,11 +591,26 @@
 
       return (
         <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-sans text-slate-800" onKeyDown={handleGlobalKeyDown}>
+          {/* Main Alerts */}
           {alertMsg && (
             <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-[100]">
               <div className="bg-white p-6 rounded-xl shadow-xl max-w-sm w-full text-center border-t-4 border-[#D4AF37]">
                 <p className="text-lg font-bold text-slate-800 mb-6">{alertMsg}</p>
                 <button onClick={() => setAlertMsg('')} className="bg-black text-white px-6 py-2 rounded-lg font-bold w-full hover:bg-gray-800 transition-colors">OK</button>
+              </div>
+            </div>
+          )}
+
+          {/* Clear Form Confirmation */}
+          {showClearConfirm && (
+            <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-[100]">
+              <div className="bg-white p-6 rounded-xl shadow-xl max-w-sm w-full text-center border-t-4 border-red-500">
+                <h3 className="text-xl font-bold text-slate-800 mb-2">Clear All Data?</h3>
+                <p className="text-slate-600 mb-6">Are you sure you want to clear the entire form? This cannot be undone.</p>
+                <div className="flex gap-3">
+                  <button onClick={() => setShowClearConfirm(false)} className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-bold w-full hover:bg-gray-300 transition-colors">Cancel</button>
+                  <button onClick={clearAllFields} className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold w-full hover:bg-red-600 transition-colors">Yes, Clear</button>
+                </div>
               </div>
             </div>
           )}
@@ -1295,6 +1341,23 @@
                   </>
                 )}
               </section>
+
+              {/* === BOTTOM ACTION BUTTONS === */}
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4 border-t border-gray-200 pt-8 mt-8">
+                <button 
+                  onClick={() => setShowClearConfirm(true)} 
+                  className="text-red-500 font-bold hover:text-red-700 transition-colors order-2 md:order-1 py-2"
+                >
+                  Clear All Fields
+                </button>
+                <button 
+                  onClick={() => setShowSummary(true)} 
+                  className="bg-[#D4AF37] hover:bg-[#b5952f] w-full md:w-auto text-black px-8 py-4 rounded-xl font-extrabold flex items-center justify-center gap-2 shadow-lg transition-all text-lg order-1 md:order-2"
+                >
+                  <CheckCircle className="w-6 h-6" /> Finish & Send
+                </button>
+              </div>
+
             </div>
           </div>
 
