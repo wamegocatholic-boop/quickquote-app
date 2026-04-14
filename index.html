@@ -12,6 +12,15 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <!-- Load Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Load Firebase Modular SDK to Window -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    
+    window.FirebaseAPI = { initializeApp, getFirestore, collection, addDoc, serverTimestamp };
+  </script>
+
 </head>
 <body class="bg-gray-50">
   <div id="root"></div>
@@ -88,14 +97,21 @@
       { id: 'farm', label: 'Farmowners', icon: Tractor },
     ];
 
-    // !!! CONFIGURE YOUR EMAILS HERE !!!
-    const AUTOMATION_EMAIL = "zteske@fumainsurance.com"; 
-    const CSR_EMAIL = "office.ks@fumainsurance.com";
+    // FIREBASE INITIALIZATION 
+    const firebaseConfig = {
+      apiKey: "AIzaSyC7GAOJOpLw-oLVC9c-Z9IuhqZ8GEZq-FY",
+      authDomain: "quickquote-pro-7f4e7.firebaseapp.com",
+      projectId: "quickquote-pro-7f4e7",
+      storageBucket: "quickquote-pro-7f4e7.firebasestorage.app",
+      messagingSenderId: "176442706897",
+      appId: "1:176442706897:web:6c5510cb4bc57317afeef0"
+    };
 
     const App = () => {
-      const [appStep, setAppStep] = useState('selection'); // 'selection' or 'entry'
+      const [appStep, setAppStep] = useState('selection'); // 'selection', 'entry', 'success'
       const [selectedCats, setSelectedCats] = useState([]);
       const [isClientMode, setIsClientMode] = useState(false);
+      const [isSubmitting, setIsSubmitting] = useState(false);
       
       const [smsInfo, setSmsInfo] = useState({ name: '', phone: '' });
 
@@ -149,12 +165,25 @@
       const [showSuggestions, setShowSuggestions] = useState(false);
       const [detectedCounty, setDetectedCounty] = useState(''); 
       const [addressQuery, setAddressQuery] = useState(''); 
-      const [activeAddressField, setActiveAddressField] = useState(null); // 'primary', 'location', 'current'
+      const [activeAddressField, setActiveAddressField] = useState(null); 
 
       const suggestionRef = useRef(null);
       const locationRef = useRef(null);
       const currentAddressRef = useRef(null);
       const naicsRef = useRef(null);
+
+      // --- Database Initialization ---
+      useEffect(() => {
+        // Initialize Firebase once the external module script sets it on the window
+        const initDB = () => {
+          if (window.FirebaseAPI && !window.firebaseAppInstance) {
+            window.firebaseAppInstance = window.FirebaseAPI.initializeApp(firebaseConfig);
+            window.dbInstance = window.FirebaseAPI.getFirestore(window.firebaseAppInstance);
+          }
+        };
+        // Small delay to ensure module script executes
+        setTimeout(initDB, 500);
+      }, []);
 
       // --- URL Parameter Logic (Client Shareable Link) ---
       useEffect(() => {
@@ -459,21 +488,60 @@
         return text;
       };
 
-      const sendViaEmail = () => {
-        if (!insured.last1) return setAlertMsg("Please enter at least the Primary Last Name.");
-        let folderName = `${insured.last1}, ${insured.first1}${insured.first2 ? ' & ' + insured.first2 : ''}`;
-        const subject = encodeURIComponent(`[QuickQuote] ${folderName}`);
-        const body = encodeURIComponent(generateSummaryText());
-        
-        // Secure Privacy Feature: Strip CC if in client mode
-        const ccString = !isClientMode ? `&cc=${CSR_EMAIL}` : '';
-        const mailtoLink = `mailto:${AUTOMATION_EMAIL}?subject=${subject}&body=${body}${ccString}`;
-        
-        const link = document.createElement('a');
-        link.href = mailtoLink;
-        link.target = '_top'; 
-        link.click();
-        setShowSummary(false);
+      // --- NEW: FIREBASE DATABASE SUBMISSION ---
+      const submitToDatabase = async () => {
+        if (!insured.last1 || !insured.first1) {
+          setAlertMsg("Please fill out at least the Primary Insured's First and Last Name.");
+          return;
+        }
+
+        if (!window.FirebaseAPI || !window.dbInstance) {
+          setAlertMsg("Database connection is still initializing. Please try again in a few seconds.");
+          return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+          const { collection, addDoc, serverTimestamp } = window.FirebaseAPI;
+          const db = window.dbInstance;
+
+          // Package all the app data
+          const payload = {
+            timestamp: serverTimestamp(),
+            categories: selectedCats,
+            clientName: `${insured.first1} ${insured.last1}`,
+            insured,
+            inspection,
+            drivers,
+            vehicles,
+            cycleVehicles,
+            camperVehicles,
+            watercraft,
+            commAutoVehicles,
+            home,
+            farm: { farmNoDwelling, farmLocations, farmOutbuildings, farmProperty },
+            business,
+            wcCodes,
+            life,
+            overallNotes,
+            summaryText: generateSummaryText() // We save the text block too so it's easy to copy/paste from the DB later!
+          };
+
+          // Write to Firestore (creates a 'submissions' collection inside the safe artifacts path)
+          const submissionsRef = collection(db, 'artifacts', 'QuickQuote', 'public', 'data', 'submissions');
+          await addDoc(submissionsRef, payload);
+
+          // Success! Show Thank You screen
+          setShowSummary(false);
+          setAppStep('success');
+
+        } catch (error) {
+          console.error("Firebase Error:", error);
+          setAlertMsg("There was a problem saving your quote. Please check your internet connection and try again.");
+        } finally {
+          setIsSubmitting(false);
+        }
       };
 
       const copyToClipboard = () => {
@@ -541,6 +609,27 @@
       );
 
       // --- RENDER COMPONENTS ---
+
+      if (appStep === 'success') {
+        return (
+          <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+            <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center border-t-8 border-[#D4AF37]">
+              <CheckCircle className="w-20 h-20 text-[#D4AF37] mx-auto mb-6" />
+              <h2 className="text-3xl font-extrabold text-black mb-2">Quote Submitted!</h2>
+              <p className="text-gray-600 mb-8">Thank you! Your information has been securely transmitted. Our team will review the details and be in touch shortly with your customized quotes.</p>
+              
+              {!isClientMode && (
+                <button 
+                  onClick={() => { clearAllFields(); setAppStep('selection'); }}
+                  className="bg-black text-white px-6 py-3 rounded-lg font-bold w-full hover:bg-gray-800 transition-colors"
+                >
+                  Start New Quote
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      }
 
       if (appStep === 'selection') {
         return (
@@ -1354,7 +1443,7 @@
                   onClick={() => setShowSummary(true)} 
                   className="bg-[#D4AF37] hover:bg-[#b5952f] w-full md:w-auto text-black px-8 py-4 rounded-xl font-extrabold flex items-center justify-center gap-2 shadow-lg transition-all text-lg order-1 md:order-2"
                 >
-                  <CheckCircle className="w-6 h-6" /> Finish & Send
+                  <CheckCircle className="w-6 h-6" /> Review & Submit
                 </button>
               </div>
 
@@ -1366,7 +1455,7 @@
             <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
               <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col">
                 <div className="p-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl">
-                  <h3 className="text-xl font-bold text-black">Intake Summary</h3>
+                  <h3 className="text-xl font-bold text-black">Review Quote Details</h3>
                   <button onClick={() => setShowSummary(false)} className="text-slate-500 hover:text-black text-2xl leading-none transition-colors">&times;</button>
                 </div>
                 <div className="p-4 flex-grow overflow-y-auto">
@@ -1375,10 +1464,12 @@
                   </pre>
                 </div>
                 <div className="p-4 border-t bg-gray-50 rounded-b-xl flex flex-col md:flex-row justify-end gap-3">
-                  <button onClick={() => setAlertMsg('Copying logic running... Check your clipboard.')} className="px-4 py-2 text-black bg-white font-bold hover:bg-yellow-50 rounded border border-gray-300 md:mr-auto transition-colors">Copy Summary</button>
+                  {!isClientMode && (
+                    <button onClick={() => { copyToClipboard(); setAlertMsg('Summary copied to clipboard!'); }} className="px-4 py-2 text-black bg-white font-bold hover:bg-yellow-50 rounded border border-gray-300 md:mr-auto transition-colors">Copy to Clipboard</button>
+                  )}
                   <button onClick={() => setShowSummary(false)} className="px-4 py-2 text-slate-600 font-bold hover:bg-slate-200 rounded transition-colors">Edit Data</button>
-                  <button onClick={sendViaEmail} className="bg-[#D4AF37] hover:bg-[#C5A017] text-black px-6 py-2 rounded font-extrabold flex items-center justify-center gap-2 shadow-md transition-colors">
-                    <Mail className="w-5 h-5"/> Send via Email
+                  <button onClick={submitToDatabase} disabled={isSubmitting} className="bg-[#D4AF37] hover:bg-[#C5A017] text-black px-6 py-2 rounded font-extrabold flex items-center justify-center gap-2 shadow-md transition-colors disabled:opacity-50">
+                    {isSubmitting ? 'Saving Securely...' : 'Submit Securely'}
                   </button>
                 </div>
               </div>
