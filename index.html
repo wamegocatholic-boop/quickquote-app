@@ -196,6 +196,9 @@
           setSelectedCats(['inspection']);
           setAppStep('entry');
           setIsClientMode(true);
+        } else if (params.get('mode') === 'fullclient') {
+          setAppStep('selection');
+          setIsClientMode(true);
         }
       }, []);
 
@@ -310,11 +313,18 @@
         setTimeout(() => window.open('https://www.kdor.ks.gov/Apps/DLStatus/login.aspx', '_blank'), 1500);
       };
 
-      const handleSendSms = () => {
+      const handleSendSms = (type) => {
         if (!smsInfo.phone) return setAlertMsg("Please enter a phone number.");
         const baseUrl = window.location.href.split('?')[0];
-        const link = `${baseUrl}?mode=client`;
-        const message = `Hi ${smsInfo.name}, it was great meeting you! You can use this secure link to quickly provide the details for your insurance quotes: ${link}`;
+        let link, message;
+        
+        if (type === 'inspection') {
+          link = `${baseUrl}?mode=client`;
+          message = `Hi ${smsInfo.name}, it was great meeting you! You can use this secure link to quickly provide the details for your insurance quotes: ${link}`;
+        } else {
+          link = `${baseUrl}?mode=fullclient`;
+          message = `Hi ${smsInfo.name}! You can use this secure link to select the coverage you need and quickly provide your details for a quote: ${link}`;
+        }
         
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         const sep = isIOS ? '&' : '?';
@@ -344,10 +354,15 @@
         setAppStep('selection');
         setShowClearConfirm(false);
         
-        // If in client mode, ensure we go back to the single inspection form instead of category menu
+        // If in client mode, ensure we go back to the proper screen instead of category menu
         if (isClientMode) {
-          setSelectedCats(['inspection']);
-          setAppStep('entry');
+          const params = new URLSearchParams(window.location.search);
+          if (params.get('mode') === 'client') {
+            setSelectedCats(['inspection']);
+            setAppStep('entry');
+          } else {
+            setAppStep('selection');
+          }
         }
       };
 
@@ -638,12 +653,12 @@
             <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
               <div className="bg-black text-white p-6 text-center border-b-4 border-[#D4AF37]">
                 <h1 className="text-3xl font-bold">QuickQuote Pro</h1>
-                <p className="text-gray-400 mt-1 uppercase tracking-widest text-xs font-bold">Farmers Union Midwest Agency</p>
+                <p className="text-gray-400 mt-1 uppercase tracking-widest text-xs font-bold">{isClientMode ? 'Secure Client Portal' : 'Farmers Union Midwest Agency'}</p>
               </div>
               <div className="p-8">
                 <h2 className="text-xl font-bold text-gray-800 mb-6 text-center">What type of quote are we working on?</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-                  {CATEGORIES.map(cat => (
+                  {CATEGORIES.filter(cat => !(isClientMode && cat.id === 'inspection')).map(cat => (
                     <button 
                       key={cat.id} 
                       onClick={() => toggleCategory(cat.id)}
@@ -663,15 +678,20 @@
                 </button>
 
                 {/* SMS Link Feature */}
-                <div className="mt-10 border-t pt-8">
-                  <h3 className="text-lg font-bold text-black mb-2 flex items-center gap-2"><MessageCircle className="w-5 h-5 text-[#D4AF37]"/> Text Link to Client</h3>
-                  <p className="text-sm text-gray-500 mb-4">Send a secure link so they can fill out the fast Inspection form on their phone.</p>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <input placeholder="Client Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none flex-grow" value={smsInfo.name} onChange={e => setSmsInfo({...smsInfo, name: e.target.value})} />
-                    <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none flex-grow" value={smsInfo.phone} onChange={e => setSmsInfo({...smsInfo, phone: e.target.value})} />
-                    <button onClick={handleSendSms} className="bg-[#D4AF37] text-black font-bold px-6 py-3 rounded hover:bg-[#b5952f] transition-colors whitespace-nowrap">Send SMS</button>
+                {!isClientMode && (
+                  <div className="mt-10 border-t pt-8">
+                    <h3 className="text-lg font-bold text-black mb-2 flex items-center gap-2"><MessageCircle className="w-5 h-5 text-[#D4AF37]"/> Text Link to Client</h3>
+                    <p className="text-sm text-gray-500 mb-4">Send a secure link so they can fill out the form on their phone.</p>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <input placeholder="Client Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none flex-grow" value={smsInfo.name} onChange={e => setSmsInfo({...smsInfo, name: e.target.value})} />
+                      <input placeholder="Phone Number" type="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none flex-grow" value={smsInfo.phone} onChange={e => setSmsInfo({...smsInfo, phone: e.target.value})} />
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3 mt-3">
+                      <button onClick={() => handleSendSms('inspection')} className="bg-[#D4AF37] text-black font-bold px-4 py-3 rounded hover:bg-[#b5952f] transition-colors whitespace-nowrap flex-1">Send Inspection Form</button>
+                      <button onClick={() => handleSendSms('full')} className="bg-black text-white font-bold px-4 py-3 rounded hover:bg-gray-800 transition-colors whitespace-nowrap flex-1">Send Full Form</button>
+                    </div>
                   </div>
-                </div>
+                )}
 
               </div>
             </div>
@@ -707,11 +727,16 @@
 
           <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden border border-slate-200 mb-20">
             <div className="bg-black border-t-4 border-[#D4AF37] text-white p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center gap-4 cursor-pointer" onClick={() => !isClientMode && setAppStep('selection')}>
+              <div className="flex items-center gap-4 cursor-pointer" onClick={() => {
+                const mode = new URLSearchParams(window.location.search).get('mode');
+                if (!isClientMode || mode === 'fullclient') setAppStep('selection');
+              }}>
                 <img src="logo.jpg" alt="FUMA Logo" className="h-12 w-auto bg-white p-1 rounded" onError={e => e.target.style.display = 'none'} />
                 <div>
                   <h1 className="text-2xl font-bold">QuickQuote Pro</h1>
-                  <p className="text-gray-400 text-xs font-bold uppercase tracking-tight">{isClientMode ? 'Secure Client Portal' : 'Return to Menu'}</p>
+                  <p className="text-gray-400 text-xs font-bold uppercase tracking-tight">
+                    {isClientMode ? (new URLSearchParams(window.location.search).get('mode') === 'fullclient' ? 'Return to Menu' : 'Secure Client Portal') : 'Return to Menu'}
+                  </p>
                 </div>
               </div>
               <button onClick={() => setShowSummary(true)} className="bg-[#D4AF37] hover:bg-[#b5952f] text-black px-6 py-2.5 rounded-lg font-extrabold flex items-center justify-center gap-2 shadow-md transition-colors">
