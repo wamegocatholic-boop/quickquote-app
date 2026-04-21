@@ -6,11 +6,12 @@
   <title>QuickQuote Pro - FUMA</title>
   
   <!-- Web App & Home Screen Icon Tags -->
-  <link rel="icon" href="logo.jpg" />
-  <link rel="apple-touch-icon" href="logo.jpg" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
   <meta name="apple-mobile-web-app-title" content="QuickQuote" />
   <meta name="application-name" content="QuickQuote" />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#D4AF37" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
 
@@ -63,6 +64,7 @@
     const Anchor = (p) => <Icon {...p}><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><line x1="5" y1="12" x2="19" y2="12"/><path d="M2 15s1.5 2 3 2 3-2 3-2 1.5 2 3 2 3-2 3-2 1.5 2 3 2 3-2 3-2"/></Icon>;
     const Clipboard = (p) => <Icon {...p}><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></Icon>;
     const MessageCircle = (p) => <Icon {...p}><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></Icon>;
+    const Copy = (p) => <Icon {...p}><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></Icon>;
 
     const STATES = ["AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"];
     const DEDUCTIBLES = ["$250", "$500", "$750", "$1000", "$1500", "$2000", "$2500"];
@@ -338,6 +340,23 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         const sep = isIOS ? '&' : '?';
         window.location.href = `sms:${smsInfo.phone}${sep}body=${encodeURIComponent(message)}`;
+      };
+
+      const handleCopyLink = (type) => {
+        const baseUrl = window.location.href.split('?')[0];
+        const link = type === 'inspection' ? `${baseUrl}?mode=client` : `${baseUrl}?mode=fullclient`;
+        
+        if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(link).then(() => setAlertMsg("Link copied to clipboard!")).catch(e => console.error(e));
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = link;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try { document.execCommand('copy'); setAlertMsg("Link copied to clipboard!"); } 
+            catch (err) { setAlertMsg('Copy failed.'); }
+            document.body.removeChild(textArea);
+        }
       };
 
       // --- Form Actions ---
@@ -694,14 +713,20 @@
                 {!isClientMode && (
                   <div className="mt-10 border-t pt-8">
                     <h3 className="text-lg font-bold text-black mb-2 flex items-center gap-2"><MessageCircle className="w-5 h-5 text-[#D4AF37]"/> Text Link to Client</h3>
-                    <p className="text-sm text-gray-500 mb-4">Send a secure link so they can fill out the form on their phone.</p>
+                    <p className="text-sm text-gray-500 mb-4">Send a secure link so they can fill out the form on their phone, or copy the link to share it directly.</p>
                     <div className="flex flex-col sm:flex-row gap-3">
                       <input placeholder="Client Name" autoComplete="name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none flex-grow" value={smsInfo.name} onChange={e => setSmsInfo({...smsInfo, name: e.target.value})} />
                       <input placeholder="Phone Number" type="tel" autoComplete="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none flex-grow" value={smsInfo.phone} onChange={e => setSmsInfo({...smsInfo, phone: e.target.value})} />
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-3 mt-3">
-                      <button onClick={() => handleSendSms('inspection')} className="bg-[#D4AF37] text-black font-bold px-4 py-3 rounded hover:bg-[#b5952f] transition-colors whitespace-nowrap flex-1">Send Inspection Form</button>
-                      <button onClick={() => handleSendSms('full')} className="bg-black text-white font-bold px-4 py-3 rounded hover:bg-gray-800 transition-colors whitespace-nowrap flex-1">Send Full Form</button>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                      <div className="flex gap-2">
+                        <button onClick={() => handleSendSms('inspection')} className="bg-[#D4AF37] text-black font-bold px-4 py-3 rounded hover:bg-[#b5952f] transition-colors whitespace-nowrap flex-grow">Send Inspection Form</button>
+                        <button onClick={() => handleCopyLink('inspection')} className="bg-gray-200 text-gray-700 px-4 py-3 rounded hover:bg-gray-300 transition-colors flex-shrink-0 flex items-center justify-center" title="Copy Inspection Link"><Copy className="w-5 h-5"/></button>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => handleSendSms('full')} className="bg-black text-white font-bold px-4 py-3 rounded hover:bg-gray-800 transition-colors whitespace-nowrap flex-grow">Send Full Form</button>
+                        <button onClick={() => handleCopyLink('full')} className="bg-gray-200 text-gray-700 px-4 py-3 rounded hover:bg-gray-300 transition-colors flex-shrink-0 flex items-center justify-center" title="Copy Full Form Link"><Copy className="w-5 h-5"/></button>
+                      </div>
                     </div>
                   </div>
                 )}
