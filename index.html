@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickQuote Pro - FUMA</title>
+  <title>FUMA Insurance</title>
   
   <!-- Web App & Home Screen Icon Tags -->
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="apple-touch-icon" href="icon.svg" />
-  <meta name="apple-mobile-web-app-title" content="QuickQuote" />
-  <meta name="application-name" content="QuickQuote" />
+  <meta name="apple-mobile-web-app-title" content="FUMA Insurance" />
+  <meta name="application-name" content="FUMA Insurance" />
   <meta name="theme-color" content="#D4AF37" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -200,6 +200,11 @@
       const locationRef = useRef(null);
       const currentAddressRef = useRef(null);
       const naicsRef = useRef(null);
+
+      // --- Force Scroll to Top on Step Change ---
+      useEffect(() => {
+        window.scrollTo(0, 0);
+      }, [appStep]);
 
       // --- Database Initialization ---
       useEffect(() => {
@@ -529,7 +534,7 @@
           vehicles.forEach((v, i) => {
             t += `Auto ${i+1}: ${v.year} ${v.make} ${v.model}\r\n`;
             t += `  - VIN: ${v.vin}\r\n`;
-            t += `  - Cov: ${v.coverage} ` + (v.coverage === 'Full Coverage' ? '(Ded: ' + v.deductible + ')' : '') + `\r\n`;
+            t += `  - Cov: ${v.coverage} ` + (v.coverage === 'Full Coverage' ? `(Ded: ${v.deductible})` : '') + `\r\n`;
           });
           t += `\r\n`;
         }
@@ -537,9 +542,9 @@
         if (selectedCats.includes('commauto') && commAutoVehicles.length > 0) {
           t += `--- COMMERCIAL AUTO VEHICLES ---\r\n`;
           commAutoVehicles.forEach((v, i) => {
-            t += `Comm Auto ${i+1}: ${v.year} ${v.make} ${v.model} ` + (v.desc ? '(' + v.desc + ')' : '') + `\r\n`;
+            t += `Comm Auto ${i+1}: ${v.year} ${v.make} ${v.model} ` + (v.desc ? `(${v.desc})` : '') + `\r\n`;
             t += `  - VIN: ${v.vin}\r\n`;
-            t += `  - Cov: ${v.coverage} ` + (v.coverage === 'Full Coverage' ? '(Ded: ' + v.deductible + ')' : '') + `\r\n`;
+            t += `  - Cov: ${v.coverage} ` + (v.coverage === 'Full Coverage' ? `(Ded: ${v.deductible})` : '') + `\r\n`;
           });
           t += `\r\n`;
         }
@@ -550,7 +555,7 @@
             t += `Camper ${i+1}: ${v.year} ${v.make} ${v.model}\r\n`;
             t += `  - VIN: ${v.vin}\r\n`;
             t += `  - Details: ${v.style} | Length: ${v.length} | Slides: ${v.slides} | Val: $${v.value}\r\n`;
-            t += `  - Cov: ${v.coverage} ` + (v.coverage === 'Full Coverage' ? '(Ded: ' + v.deductible + ')' : '') + `\r\n`;
+            t += `  - Cov: ${v.coverage} ` + (v.coverage === 'Full Coverage' ? `(Ded: ${v.deductible})` : '') + `\r\n`;
             t += `  - Prior: ${v.carrier} ($${v.premium})\r\n`;
           });
           t += `\r\n`;
@@ -561,7 +566,7 @@
           cycleVehicles.forEach((v, i) => {
             t += `Unit ${i+1}: ${v.year} ${v.make} ${v.model}\r\n`;
             t += `  - VIN: ${v.vin}   |   CC: ${v.cc}\r\n`;
-            t += `  - Cov: ${v.coverage} ` + (v.coverage === 'Full Coverage' ? '(Ded: ' + v.deductible + ')' : '') + `\r\n`;
+            t += `  - Cov: ${v.coverage} ` + (v.coverage === 'Full Coverage' ? `(Ded: ${v.deductible})` : '') + `\r\n`;
           });
           t += `\r\n`;
         }
@@ -572,7 +577,7 @@
             t += `Boat ${i+1}: ${v.year} ${v.make} ${v.model}\r\n`;
             t += `  - Hull ID: ${v.hullId}   |   Mat: ${v.material === 'Other' ? v.materialOther : v.material}\r\n`;
             t += `  - Motor: ${v.motorMake} (${v.hp} HP)\r\n`;
-            t += `  - Val: $${v.value}   |   Cov: ${v.coverage} ` + (v.coverage === 'Full Coverage' ? '(Ded: ' + v.deductible + ')' : '') + `\r\n`;
+            t += `  - Val: $${v.value}   |   Cov: ${v.coverage} ` + (v.coverage === 'Full Coverage' ? `(Ded: ${v.deductible})` : '') + `\r\n`;
           });
           t += `\r\n`;
         }
@@ -729,7 +734,6 @@
           }
 
           // Package the payload specifically for the Firebase Trigger Email Extension
-          // NOTE: The CC line for the CSR has been intentionally removed here.
           const payload = {
             to: AUTOMATION_EMAIL,
             message: {
@@ -856,7 +860,7 @@
               <div className="bg-black border-t-4 border-[#D4AF37] text-white p-5 md:p-6 flex items-center gap-4">
                 <img src="logo.png" alt="FUMA Logo" className="h-12 w-auto object-contain drop-shadow-md" onError={e => e.target.style.display = 'none'} />
                 <div>
-                  <h1 className="text-2xl font-bold">Secure Payment Intake</h1>
+                  <h1 className="text-2xl font-bold">FUMA Insurance</h1>
                   <p className="text-gray-400 text-xs font-bold uppercase tracking-tight">Policy Binding Authorization</p>
                 </div>
               </div>
@@ -926,8 +930,9 @@
         return (
           <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col items-center">
             <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-              <div className="bg-black text-white p-6 text-center border-b-4 border-[#D4AF37]">
-                <h1 className="text-3xl font-bold">QuickQuote Pro</h1>
+              <div className="bg-black text-white p-6 flex flex-col items-center text-center border-b-4 border-[#D4AF37]">
+                <img src="logo.png" alt="FUMA Logo" className="h-16 w-auto object-contain drop-shadow-md mb-2" onError={e => e.target.style.display = 'none'} />
+                <h1 className="text-3xl font-bold">FUMA Insurance</h1>
                 <p className="text-gray-400 mt-1 uppercase tracking-widest text-xs font-bold">{isClientMode ? 'Secure Client Portal' : 'Farmers Union Midwest Agency'}</p>
               </div>
               <div className="p-8">
@@ -1028,7 +1033,7 @@
               }}>
                 <img src="logo.png" alt="FUMA Logo" className="h-12 w-auto object-contain drop-shadow-md" onError={e => e.target.style.display = 'none'} />
                 <div>
-                  <h1 className="text-2xl font-bold">QuickQuote Pro</h1>
+                  <h1 className="text-2xl font-bold">FUMA Insurance</h1>
                   <p className="text-gray-400 text-xs font-bold uppercase tracking-tight">
                     {isClientMode ? (new URLSearchParams(window.location.search).get('mode') === 'fullclient' ? 'Return to Menu' : 'Secure Client Portal') : 'Return to Menu'}
                   </p>
