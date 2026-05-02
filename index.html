@@ -138,7 +138,7 @@
       // --- PAYMENT MODULE STATE ---
       const [paymentMethod, setPaymentMethod] = useState('eft');
       const [paymentInfo, setPaymentInfo] = useState({
-        accountName: '', routing: '', account: '', frequency: 'Monthly'
+        firstName: '', lastName: '', accountName: '', routing: '', account: '', frequency: 'Monthly'
       });
 
       // --- QUOTE MODULE STATE ---
@@ -399,7 +399,7 @@
         setLife({ amount: '', term: '', healthNotes: '' });
         setOverallNotes('');
         setSelectedCats([]);
-        setPaymentInfo({ accountName: '', routing: '', account: '', frequency: 'Monthly' });
+        setPaymentInfo({ firstName: '', lastName: '', accountName: '', routing: '', account: '', frequency: 'Monthly' });
         setAttachments([]);
         
         setShowClearConfirm(false);
@@ -474,6 +474,8 @@
       const generatePaymentText = () => {
         let t = sectionHeader("SECURE EFT PAYMENT SUBMISSION");
         t += `${pad("Date Submitted:")} ${new Date().toLocaleDateString()}\r\n\r\n`;
+        t += `--- CLIENT DETAILS ---\r\n`;
+        t += `${pad("Client Name:")} ${paymentInfo.firstName} ${paymentInfo.lastName}\r\n\r\n`;
         t += `--- EFT / CHECKING DETAILS ---\r\n`;
         t += `${pad("Name on Account:")} ${paymentInfo.accountName}\r\n`;
         t += `${pad("Routing Number:")} ${paymentInfo.routing}\r\n`;
@@ -684,8 +686,8 @@
           setAlertMsg("Please fill out at least the Primary Insured's First and Last Name.");
           return;
         }
-        if (isPaymentFlow && (!paymentInfo.accountName || !paymentInfo.routing || !paymentInfo.account)) {
-          setAlertMsg("Please complete all EFT fields before submitting securely.");
+        if (isPaymentFlow && (!paymentInfo.firstName || !paymentInfo.lastName || !paymentInfo.accountName || !paymentInfo.routing || !paymentInfo.account)) {
+          setAlertMsg("Please complete all EFT fields (including First and Last Name) before submitting securely.");
           return;
         }
 
@@ -723,8 +725,7 @@
           let emailBody = "";
 
           if (isPaymentFlow) {
-            const dateStr = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
-            subjectStr = `[Payment] Payment_info_${dateStr} - ${paymentInfo.accountName}`;
+            subjectStr = `[Payment] ${paymentInfo.lastName}, ${paymentInfo.firstName}`;
             emailBody = generatePaymentText();
           } else {
             let folderNameStr = `${insured.last1}, ${insured.first1}`;
@@ -880,6 +881,16 @@
                   </div>
                 ) : (
                   <div className="space-y-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                      <div>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Client First Name</label>
+                        <input placeholder="John" autoComplete="given-name" className="w-full border-2 border-gray-200 p-4 rounded-xl bg-gray-50 focus:bg-white focus:border-[#D4AF37] focus:ring-4 ring-[#D4AF37]/20 outline-none transition-all text-lg font-medium" value={paymentInfo.firstName} onChange={e => setPaymentInfo({...paymentInfo, firstName: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Client Last Name</label>
+                        <input placeholder="Doe" autoComplete="family-name" className="w-full border-2 border-gray-200 p-4 rounded-xl bg-gray-50 focus:bg-white focus:border-[#D4AF37] focus:ring-4 ring-[#D4AF37]/20 outline-none transition-all text-lg font-medium" value={paymentInfo.lastName} onChange={e => setPaymentInfo({...paymentInfo, lastName: e.target.value})} />
+                      </div>
+                    </div>
                     <div>
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Name on Bank Account</label>
                       <input placeholder="John Doe" autoComplete="name" className="w-full border-2 border-gray-200 p-4 rounded-xl bg-gray-50 focus:bg-white focus:border-[#D4AF37] focus:ring-4 ring-[#D4AF37]/20 outline-none transition-all text-lg font-medium" value={paymentInfo.accountName} onChange={e => setPaymentInfo({...paymentInfo, accountName: e.target.value})} />
