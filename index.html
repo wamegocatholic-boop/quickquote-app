@@ -19,7 +19,7 @@
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <!-- Load Babel compiler for JSX -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.23.0/babel.min.js"></script>
   <!-- Load Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -35,6 +35,12 @@
 </head>
 <body class="bg-gray-50">
   <div id="root"></div>
+
+  <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+      document.body.innerHTML = '<div style="color:red; background: white; border: 4px solid red; font-family: monospace; font-size:20px; padding: 20px; margin: 20px; z-index: 9999; position: relative;"><h1>Fatal Error</h1><p>' + message + '</p><p>Line: ' + lineno + '</p></div>';
+    };
+  </script>
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
@@ -127,7 +133,7 @@
     const AUTOMATION_EMAIL = "zteske@fumainsurance.com"; 
 
     const App = () => {
-      const [appStep, setAppStep] = useState('selection'); // 'selection', 'entry', 'success', 'payment'
+      const [appStep, setAppStep] = useState('dashboard'); // 'dashboard', 'selection', 'entry', 'success', 'payment', 'buildCustomQuote', 'buildCustomData', 'paymentDashboard', 'customDataClient'
       const [selectedCats, setSelectedCats] = useState([]);
       const [isClientMode, setIsClientMode] = useState(false);
       const [isSubmitting, setIsSubmitting] = useState(false);
@@ -135,10 +141,17 @@
       const [smsInfo, setSmsInfo] = useState({ name: '', phone: '' });
       const [includeSignature, setIncludeSignature] = useState(false);
 
+      // --- NEW: Custom Form State ---
+      const [customFields, setCustomFields] = useState([]); // { id: 1, label: '', value: '' }
+      const [customFormTitle, setCustomFormTitle] = useState('Custom Data Form');
+      const [hiddenQuoteFields, setHiddenQuoteFields] = useState([]); // fields to exclude
+      const [clientFirst, setClientFirst] = useState('');
+      const [clientLast, setClientLast] = useState('');
+
       // --- PAYMENT MODULE STATE ---
       const [paymentMethod, setPaymentMethod] = useState('eft');
       const [paymentInfo, setPaymentInfo] = useState({
-        firstName: '', lastName: '', accountName: '', routing: '', account: '', frequency: 'Monthly'
+        firstName: '', lastName: '', accountName: '', routing: '', account: '', frequency: 'Monthly', notes: ''
       });
 
       // --- QUOTE MODULE STATE ---
@@ -220,16 +233,48 @@
       // --- URL Parameter Logic (Client Shareable Link) ---
       useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        if (params.get('mode') === 'client') {
+        const mode = params.get('mode');
+        if (!mode) return;
+
+        const first = params.get('first') || '';
+        const last = params.get('last') || '';
+        if (first || last) {
+          setInsured(prev => ({ ...prev, first1: first, last1: last }));
+          setPaymentInfo(prev => ({ ...prev, firstName: first, lastName: last }));
+        }
+
+        if (mode === 'client') {
           setSelectedCats(['inspection']);
           setAppStep('entry');
           setIsClientMode(true);
-        } else if (params.get('mode') === 'fullclient') {
+        } else if (mode === 'fullclient') {
           setAppStep('selection');
           setIsClientMode(true);
-        } else if (params.get('mode') === 'payment') {
+        } else if (mode === 'payment') {
           setAppStep('payment');
           setIsClientMode(true);
+        } else if (mode === 'customData') {
+          const config = params.get('config');
+          if (config) {
+            try {
+              const parsed = JSON.parse(atob(config));
+              setCustomFields(parsed.fields || []);
+              setCustomFormTitle(parsed.title || 'Custom Data Form');
+              setAppStep('customDataClient');
+              setIsClientMode(true);
+            } catch (e) { console.error('Failed to parse custom config', e); }
+          }
+        } else if (mode === 'customQuote') {
+          const config = params.get('config');
+          if (config) {
+            try {
+              const parsed = JSON.parse(atob(config));
+              setSelectedCats(parsed.cats || []);
+              setHiddenQuoteFields(parsed.hidden || []);
+              setAppStep('entry');
+              setIsClientMode(true);
+            } catch (e) { console.error('Failed to parse quote config', e); }
+          }
         }
       }, []);
 
@@ -344,14 +389,24 @@
         
         const signature = includeSignature ? `\n\nHere's my contact info as well, feel free to reach out to me any time if you have questions or concerns as you are filling out the form. You can call or text me here on my cell anytime.\n\nZach Teske\n785-456-3505\nzteske@fumainsurance.com` : '';
 
+        const nameParams = `&first=${encodeURIComponent(clientFirst)}&last=${encodeURIComponent(clientLast)}`;
+
         if (type === 'inspection') {
-          link = `${baseUrl}?mode=client`;
+          link = `${baseUrl}?mode=client${nameParams}`;
           message = `Hi ${smsInfo.name}, it was great meeting you! You can use this secure link to quickly provide the details for your insurance quotes: ${link}${signature}`;
         } else if (type === 'payment') {
-          link = `${baseUrl}?mode=payment`;
+          link = `${baseUrl}?mode=payment${nameParams}`;
           message = `Hi ${smsInfo.name}, your policy is ready! You can securely provide your payment details here: ${link}${signature}`;
+        } else if (type === 'customData') {
+          const config = btoa(JSON.stringify({ title: customFormTitle, fields: customFields }));
+          link = `${baseUrl}?mode=customData&config=${config}${nameParams}`;
+          message = `Hi ${smsInfo.name}, please securely provide the requested information using this link: ${link}${signature}`;
+        } else if (type === 'customQuote') {
+          const config = btoa(JSON.stringify({ cats: selectedCats, hidden: hiddenQuoteFields }));
+          link = `${baseUrl}?mode=customQuote&config=${config}${nameParams}`;
+          message = `Hi ${smsInfo.name}, you can use this secure link to provide details for your custom insurance quote: ${link}${signature}`;
         } else {
-          link = `${baseUrl}?mode=fullclient`;
+          link = `${baseUrl}?mode=fullclient${nameParams}`;
           message = `Hi ${smsInfo.name}! You can use this secure link to select the coverage you need and quickly provide your details for a quote: ${link}${signature}`;
         }
         
@@ -362,9 +417,12 @@
 
       const handleCopyLink = (type) => {
         const baseUrl = window.location.href.split('?')[0];
-        let link = `${baseUrl}?mode=fullclient`;
-        if (type === 'inspection') link = `${baseUrl}?mode=client`;
-        if (type === 'payment') link = `${baseUrl}?mode=payment`;
+        const nameParams = `&first=${encodeURIComponent(clientFirst)}&last=${encodeURIComponent(clientLast)}`;
+        let link = `${baseUrl}?mode=fullclient${nameParams}`;
+        if (type === 'inspection') link = `${baseUrl}?mode=client${nameParams}`;
+        if (type === 'payment') link = `${baseUrl}?mode=payment${nameParams}`;
+        if (type === 'customData') link = `${baseUrl}?mode=customData&config=${btoa(JSON.stringify({ title: customFormTitle, fields: customFields }))}${nameParams}`;
+        if (type === 'customQuote') link = `${baseUrl}?mode=customQuote&config=${btoa(JSON.stringify({ cats: selectedCats, hidden: hiddenQuoteFields }))}${nameParams}`;
         
         if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(link).then(() => setAlertMsg("Link copied to clipboard!")).catch(e => console.error(e));
@@ -399,8 +457,9 @@
         setLife({ amount: '', term: '', healthNotes: '' });
         setOverallNotes('');
         setSelectedCats([]);
-        setPaymentInfo({ firstName: '', lastName: '', accountName: '', routing: '', account: '', frequency: 'Monthly' });
+        setPaymentInfo({ firstName: '', lastName: '', accountName: '', routing: '', account: '', frequency: 'Monthly', notes: '' });
         setAttachments([]);
+        setCustomFields(customFields.map(f => ({...f, value: ''})));
         
         setShowClearConfirm(false);
         
@@ -486,6 +545,11 @@
         t += `<p style="${pStyle}"><b>Account Number:</b> ${paymentInfo.account}</p>`;
         t += `<p style="${pStyle}"><b>Payment Frequency:</b> ${paymentInfo.frequency}</p>`;
         
+        if (paymentInfo.notes) {
+          t += `<h3 style="${h3Style}">ADDITIONAL NOTES</h3>`;
+          t += `<p style="${pStyle}">${paymentInfo.notes.replace(/\n/g, '<br/>')}</p>`;
+        }
+        
         t += `<p style="margin-top: 20px; font-style: italic; color: #64748b; font-size: 12px;">* Note: This data was handled securely via AES-256 encrypted web portal.</p>`;
         t += `</div>`;
         return t;
@@ -493,6 +557,17 @@
 
       const generateSummaryText = (uploadedUrls = []) => {
         let t = `<div style="font-family: sans-serif; color: #1e293b; max-width: 800px;">`;
+        
+        if (appStep === 'customDataClient') {
+          t += `<h2 style="${h2Style}">${customFormTitle.toUpperCase()}</h2>`;
+          t += `<p style="${pStyle}"><b>Client Name:</b> ${insured.first1} ${insured.last1}</p><br/>`;
+          customFields.forEach(f => {
+            t += `<p style="${pStyle}"><b>${f.label}:</b> ${f.value}</p>`;
+          });
+          t += `</div>`;
+          return t;
+        }
+
         t += `<h2 style="${h2Style}">QUICK QUOTE INTAKE</h2>`;
         t += `<p style="${pStyle}"><b>Categories Selected:</b> ${selectedCats.map(id => CATEGORIES.find(c => c.id === id)?.label).join(', ')}</p>`;
 
@@ -660,6 +735,13 @@
           });
         }
 
+        if (customFields.length > 0) {
+          t += `<h3 style="${h3Style}">ADDITIONAL SPECIFIC ANSWERS</h3>`;
+          customFields.forEach(f => {
+            t += `<p style="${pStyle}"><b>${f.label}:</b> ${f.value}</p>`;
+          });
+        }
+
         t += `<h3 style="${h3Style}">OVERALL NOTES</h3>`;
         t += `<p style="${pStyle}">${overallNotes.replace(/\n/g, '<br/>')}</p>`;
         
@@ -670,8 +752,15 @@
       // --- SECURE FIREBASE SUBMISSION WITH CC LOGIC ---
       const submitToDatabase = async (isPaymentFlow = false) => {
         if (!isPaymentFlow && (!insured.last1 || !insured.first1)) {
-          setAlertMsg("Please fill out at least the Primary Insured's First and Last Name.");
+          setAlertMsg("Please fill out at least the Client's First and Last Name.");
           return;
+        }
+        if (appStep === 'customDataClient') {
+           const emptyReq = customFields.some(f => !f.value);
+           if (emptyReq) {
+             setAlertMsg("Please fill out all custom fields.");
+             return;
+           }
         }
         if (isPaymentFlow && (!paymentInfo.firstName || !paymentInfo.lastName || !paymentInfo.accountName || !paymentInfo.routing || !paymentInfo.account)) {
           setAlertMsg("Please complete all EFT fields (including First and Last Name) before submitting securely.");
@@ -729,7 +818,8 @@
               html: emailBody
             },
             timestamp: serverTimestamp(),
-            type: isPaymentFlow ? 'payment' : 'quote'
+            type: isPaymentFlow ? 'payment' : 'quote',
+            filename: isPaymentFlow ? 'Payment_Authorization' : (appStep === 'customDataClient' ? 'Custom_Data_Collection' : 'Quote_Intake')
           };
 
           // Drop data into the exact 'mail' collection the extension is listening to
@@ -817,6 +907,193 @@
 
       // --- RENDER COMPONENTS ---
 
+      if (appStep === 'dashboard') {
+        return (
+          <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col items-center" onKeyDown={handleGlobalKeyDown}>
+            <div className="max-w-3xl w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+               <div className="bg-black text-white p-6 flex flex-col items-center text-center border-b-4 border-[#D4AF37]">
+                <img src="logo.png" alt="FUMA Logo" className="h-16 w-auto object-contain drop-shadow-md mb-2" onError={e => e.target.style.display = 'none'} />
+                <h1 className="text-3xl font-bold">FUMA Insurance Agent Dashboard</h1>
+              </div>
+              <div className="p-8 grid gap-4 grid-cols-1">
+                 <button onClick={() => { setSelectedCats(['inspection']); setAppStep('selection'); }} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">1. Inspection Quick Data Collection</button>
+                 <button onClick={() => setAppStep('selection')} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">2. Quote Data Collection (Standard Form)</button>
+                 <button onClick={() => setAppStep('buildCustomQuote')} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">3. Build a Custom Quote Form</button>
+                 <button onClick={() => setAppStep('buildCustomData')} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">4. Custom Data Collection (Build a form)</button>
+                 <button onClick={() => setAppStep('paymentDashboard')} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">5. Payment Collection</button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      if (appStep === 'paymentDashboard') {
+        return (
+          <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col items-center">
+            <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+              <div className="p-8">
+                <button onClick={() => setAppStep('dashboard')} className="mb-6 text-sm font-bold text-gray-500 hover:text-black">&larr; Back to Dashboard</button>
+                <h2 className="text-2xl font-bold mb-4">Payment Link Generator</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  <input placeholder="Client First Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={clientFirst} onChange={e => setClientFirst(e.target.value)} />
+                  <input placeholder="Client Last Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={clientLast} onChange={e => setClientLast(e.target.value)} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  <input placeholder="Client Name (for SMS text)" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={smsInfo.name} onChange={e => setSmsInfo({...smsInfo, name: e.target.value})} />
+                  <input placeholder="Phone Number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={smsInfo.phone} onChange={e => setSmsInfo({...smsInfo, phone: e.target.value})} />
+                </div>
+                <div className="flex gap-2 mb-4">
+                  <button onClick={() => handleSendSms('payment')} className="bg-[#D4AF37] text-black px-4 py-3 rounded font-bold hover:bg-[#b5952f] flex-grow shadow-md transition-colors">Send Payment SMS</button>
+                  <button onClick={() => handleCopyLink('payment')} className="bg-gray-200 text-black px-4 py-3 rounded font-bold hover:bg-gray-300 transition-colors shadow-sm"><Copy className="w-5 h-5"/></button>
+                </div>
+                <div className="border-t pt-4">
+                  <button onClick={() => {
+                    setPaymentInfo({...paymentInfo, firstName: clientFirst, lastName: clientLast});
+                    setAppStep('payment');
+                    setIsClientMode(false);
+                  }} className="w-full bg-black text-white px-4 py-3 rounded font-bold hover:bg-gray-800 shadow-md transition-colors">Fill Out Payment Form Now (Agent)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      if (appStep === 'buildCustomData') {
+        return (
+          <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col items-center">
+            <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+              <div className="p-8">
+                <button onClick={() => setAppStep('dashboard')} className="mb-6 text-sm font-bold text-gray-500 hover:text-black">&larr; Back to Dashboard</button>
+                <h2 className="text-2xl font-bold mb-4">Custom Data Form Builder</h2>
+                <input placeholder="Form Title (e.g. Teen Driver Details)" className="border p-3 rounded w-full mb-4 font-bold bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={customFormTitle} onChange={e => setCustomFormTitle(e.target.value)} />
+                {customFields.map((f, i) => (
+                  <div key={i} className="flex gap-2 mb-2">
+                    <input placeholder="Field Label (e.g. Driver's License #)" className="border p-2 rounded flex-grow bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={f.label} onChange={e => {
+                      const newF = [...customFields]; newF[i].label = e.target.value; setCustomFields(newF);
+                    }} />
+                    <button onClick={() => {
+                      const newF = customFields.filter((_, idx) => idx !== i); setCustomFields(newF);
+                    }} className="text-red-500 hover:text-red-700 p-2"><Trash2 className="w-5 h-5"/></button>
+                  </div>
+                ))}
+                <button onClick={() => setCustomFields([...customFields, {label: '', value: ''}])} className="text-sm font-bold text-[#D4AF37] hover:text-[#b5952f] mb-6">+ Add Field</button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 border-t pt-4">
+                  <input placeholder="Client First Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={clientFirst} onChange={e => setClientFirst(e.target.value)} />
+                  <input placeholder="Client Last Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={clientLast} onChange={e => setClientLast(e.target.value)} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  <input placeholder="Client Name (for SMS text)" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={smsInfo.name} onChange={e => setSmsInfo({...smsInfo, name: e.target.value})} />
+                  <input placeholder="Phone Number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={smsInfo.phone} onChange={e => setSmsInfo({...smsInfo, phone: e.target.value})} />
+                </div>
+                <div className="flex gap-2 mb-4">
+                  <button onClick={() => handleSendSms('customData')} className="bg-black text-white px-4 py-3 rounded font-bold hover:bg-gray-800 flex-grow shadow-md transition-colors">Send Custom Form SMS</button>
+                  <button onClick={() => handleCopyLink('customData')} className="bg-gray-200 text-black px-4 py-3 rounded font-bold hover:bg-gray-300 transition-colors shadow-sm"><Copy className="w-5 h-5"/></button>
+                </div>
+                <div className="border-t pt-4">
+                  <button onClick={() => {
+                    setInsured({...insured, first1: clientFirst, last1: clientLast});
+                    setAppStep('customDataClient');
+                    setIsClientMode(false);
+                  }} className="w-full bg-[#D4AF37] text-black px-4 py-3 rounded font-bold hover:bg-[#b5952f] shadow-md transition-colors">Fill Out Custom Form Now (Agent)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      if (appStep === 'buildCustomQuote') {
+        return (
+          <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col items-center">
+            <div className="max-w-3xl w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+              <div className="p-8">
+                <button onClick={() => setAppStep('dashboard')} className="mb-6 text-sm font-bold text-gray-500 hover:text-black">&larr; Back to Dashboard</button>
+                <h2 className="text-2xl font-bold mb-4">Build Custom Quote Form</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-6">
+                  {CATEGORIES.map(cat => (
+                    <button key={cat.id} onClick={() => toggleCategory(cat.id)} className={`p-2 rounded border text-xs font-bold transition-all ${selectedCats.includes(cat.id) ? 'bg-yellow-50 border-[#D4AF37] shadow-sm' : 'bg-gray-50 hover:bg-gray-100'}`}>{cat.label}</button>
+                  ))}
+                </div>
+                <div className="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm text-blue-800 font-medium">
+                  Select the standard lines of business above to include their fields. You can also append specific custom fields below that will appear at the bottom of the form.
+                </div>
+                <h3 className="text-lg font-bold mt-4 mb-2">Append Custom Fields</h3>
+                {customFields.map((f, i) => (
+                  <div key={i} className="flex gap-2 mb-2">
+                    <input placeholder="Custom Question/Label" className="border p-2 rounded flex-grow bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={f.label} onChange={e => {
+                      const newF = [...customFields]; newF[i].label = e.target.value; setCustomFields(newF);
+                    }} />
+                    <button onClick={() => {
+                      const newF = customFields.filter((_, idx) => idx !== i); setCustomFields(newF);
+                    }} className="text-red-500 hover:text-red-700 p-2"><Trash2 className="w-5 h-5"/></button>
+                  </div>
+                ))}
+                <button onClick={() => setCustomFields([...customFields, {label: '', value: ''}])} className="text-sm font-bold text-[#D4AF37] hover:text-[#b5952f] mb-6">+ Add Field</button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 border-t pt-4">
+                  <input placeholder="Client First Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={clientFirst} onChange={e => setClientFirst(e.target.value)} />
+                  <input placeholder="Client Last Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={clientLast} onChange={e => setClientLast(e.target.value)} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  <input placeholder="Client Name (for SMS text)" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={smsInfo.name} onChange={e => setSmsInfo({...smsInfo, name: e.target.value})} />
+                  <input placeholder="Phone Number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={smsInfo.phone} onChange={e => setSmsInfo({...smsInfo, phone: e.target.value})} />
+                </div>
+                <div className="flex gap-2 mb-4">
+                  <button onClick={() => handleSendSms('customQuote')} className="bg-black text-white px-4 py-3 rounded font-bold hover:bg-gray-800 flex-grow shadow-md transition-colors">Send Custom Quote SMS</button>
+                  <button onClick={() => handleCopyLink('customQuote')} className="bg-gray-200 text-black px-4 py-3 rounded font-bold hover:bg-gray-300 transition-colors shadow-sm"><Copy className="w-5 h-5"/></button>
+                </div>
+                <div className="border-t pt-4">
+                  <button onClick={() => {
+                    setInsured({...insured, first1: clientFirst, last1: clientLast});
+                    setAppStep('entry');
+                    setIsClientMode(false);
+                  }} className="w-full bg-[#D4AF37] text-black px-4 py-3 rounded font-bold hover:bg-[#b5952f] shadow-md transition-colors">Fill Out Custom Quote Now (Agent)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      if (appStep === 'customDataClient') {
+        return (
+          <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col items-center">
+             <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+               <div className="bg-black text-white p-6 text-center border-b-4 border-[#D4AF37]">
+                <img src="logo.png" alt="FUMA Logo" className="h-12 w-auto mx-auto object-contain drop-shadow-md mb-2" onError={e => e.target.style.display = 'none'} />
+                <h1 className="text-2xl font-bold">{customFormTitle}</h1>
+               </div>
+               <div className="p-8 space-y-4">
+                  {alertMsg && (
+                    <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded shadow-sm text-red-800 font-bold">{alertMsg}</div>
+                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 border-b pb-6">
+                    <div>
+                      <label className="text-sm font-bold text-gray-700 block mb-1">Client First Name *</label>
+                      <input placeholder="First Name" autoComplete="given-name" className="border p-3 rounded w-full bg-gray-50 focus:bg-white focus:ring-2 ring-[#D4AF37] outline-none transition-all" value={insured.first1} onChange={e => setInsured({...insured, first1: e.target.value})} />
+                    </div>
+                    <div>
+                      <label className="text-sm font-bold text-gray-700 block mb-1">Client Last Name *</label>
+                      <input placeholder="Last Name" autoComplete="family-name" className="border p-3 rounded w-full bg-gray-50 focus:bg-white focus:ring-2 ring-[#D4AF37] outline-none transition-all" value={insured.last1} onChange={e => setInsured({...insured, last1: e.target.value})} />
+                    </div>
+                  </div>
+                  {customFields.map((f, i) => (
+                    <div key={i}>
+                      <label className="text-sm font-bold text-gray-700 block mb-1">{f.label}</label>
+                      <input className="border p-3 rounded w-full bg-gray-50 focus:bg-white focus:ring-2 ring-[#D4AF37] outline-none transition-all" value={f.value} onChange={e => {
+                        const newF = [...customFields]; newF[i].value = e.target.value; setCustomFields(newF);
+                      }} />
+                    </div>
+                  ))}
+                  <button onClick={() => submitToDatabase(false)} disabled={isSubmitting} className="w-full mt-6 bg-[#D4AF37] hover:bg-[#C5A017] text-black py-4 rounded-xl font-extrabold flex justify-center items-center gap-2 shadow-lg transition-all disabled:opacity-50">
+                    {isSubmitting ? 'Saving Securely...' : <><CheckCircle className="w-6 h-6"/> Submit Form Securely</>}
+                  </button>
+               </div>
+             </div>
+          </div>
+        );
+      }
+
       if (appStep === 'success') {
         return (
           <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -903,6 +1180,11 @@
                       </select>
                     </div>
 
+                    <div>
+                      <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block">Additional Notes (Optional)</label>
+                      <textarea placeholder="Any additional instructions or notes..." className="w-full border-2 border-gray-200 p-4 rounded-xl bg-gray-50 focus:bg-white focus:border-[#D4AF37] focus:ring-4 ring-[#D4AF37]/20 outline-none transition-all text-lg font-medium min-h-[100px]" value={paymentInfo.notes} onChange={e => setPaymentInfo({...paymentInfo, notes: e.target.value})}></textarea>
+                    </div>
+
                     <div className="bg-green-50 border border-green-200 p-4 rounded-xl flex gap-3 items-start mt-6">
                       <Shield className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
                       <p className="text-xs font-bold text-green-800 leading-relaxed">Your financial data is protected. This form utilizes industry-standard AES-256 encryption to transmit your data securely to your agent's private vault.</p>
@@ -954,21 +1236,29 @@
                 </div>
                 <button 
                   disabled={selectedCats.length === 0}
-                  onClick={() => setAppStep('entry')}
+                  onClick={() => {
+                    setInsured({...insured, first1: clientFirst, last1: clientLast});
+                    setAppStep('entry');
+                    setIsClientMode(false);
+                  }}
                   className={`w-full py-4 rounded-xl font-extrabold text-lg shadow-lg transition-all ${selectedCats.length > 0 ? 'bg-black text-[#D4AF37] hover:bg-gray-800 cursor-pointer' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
                 >
-                  START DATA COLLECTION
+                  START DATA COLLECTION (AGENT)
                 </button>
 
                 {/* SMS Link Feature & Payment Shortcuts */}
                 {!isClientMode && (
                   <div className="mt-10 border-t pt-8">
                     <h3 className="text-lg font-bold text-black mb-2 flex items-center gap-2"><MessageCircle className="w-5 h-5 text-[#D4AF37]"/> Agent SMS Tools</h3>
-                    <p className="text-sm text-gray-500 mb-4">Send a secure link so the client can fill out the form on their phone, or copy the link directly.</p>
+                    <p className="text-sm text-gray-500 mb-4">Pre-fill the client's name below to generate custom links or start data collection.</p>
                     
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <input placeholder="Client Name" autoComplete="name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none flex-grow" value={smsInfo.name} onChange={e => setSmsInfo({...smsInfo, name: e.target.value})} />
-                      <input placeholder="Phone Number" type="tel" autoComplete="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none flex-grow" value={smsInfo.phone} onChange={e => setSmsInfo({...smsInfo, phone: e.target.value})} />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                      <input placeholder="Client First Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={clientFirst} onChange={e => setClientFirst(e.target.value)} />
+                      <input placeholder="Client Last Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={clientLast} onChange={e => setClientLast(e.target.value)} />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <input placeholder="Client Name (for SMS text)" autoComplete="name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={smsInfo.name} onChange={e => setSmsInfo({...smsInfo, name: e.target.value})} />
+                      <input placeholder="Phone Number" type="tel" autoComplete="tel" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={smsInfo.phone} onChange={e => setSmsInfo({...smsInfo, phone: e.target.value})} />
                     </div>
                     
                     <label className="flex items-center gap-2 text-sm font-bold text-gray-600 mt-3 cursor-pointer">
@@ -1767,6 +2057,23 @@
                   )}
                 </div>
               </section>
+
+              {/* CUSTOM APPENDED FIELDS */}
+              {customFields.length > 0 && (
+                <section className="bg-white p-6 rounded-xl border border-gray-300 shadow-sm border-l-4 border-indigo-500 mb-6">
+                  <h2 className="text-lg font-bold mb-4 text-black uppercase tracking-tight">Additional Specific Questions</h2>
+                  <div className="space-y-4">
+                    {customFields.map((f, i) => (
+                      <div key={i}>
+                        <label className="text-sm font-bold text-gray-700 block mb-1">{f.label}</label>
+                        <input className="w-full border p-3 rounded bg-gray-50 focus:bg-white focus:ring-2 ring-[#D4AF37] outline-none transition-all" value={f.value} onChange={e => {
+                          const newF = [...customFields]; newF[i].value = e.target.value; setCustomFields(newF);
+                        }} />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
 
               {/* NOTES & BOTTOM ADDITIONS */}
               <section className="bg-gray-100 p-6 rounded-xl border border-gray-300">
