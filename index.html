@@ -105,6 +105,46 @@
       { code: "111998", desc: "All Other Miscellaneous Crop Farming" }
     ];
 
+    const AVAILABLE_FIELDS = [
+      { section: 'Personal Info', label: 'Primary First Name', type: 'text' },
+      { section: 'Personal Info', label: 'Primary Last Name', type: 'text' },
+      { section: 'Personal Info', label: 'Date of Birth (MMDDYYYY)', type: 'dob' },
+      { section: 'Personal Info', label: 'Social Security Number', type: 'ssn' },
+      { section: 'Personal Info', label: 'Phone Number', type: 'tel' },
+      { section: 'Personal Info', label: 'Email Address', type: 'email' },
+      { section: 'Personal Info', label: 'Current Household Address', type: 'text' },
+      { section: 'Personal Info', label: 'Driver License Number', type: 'text' },
+      { section: 'Personal Info', label: 'Driver License State', type: 'select', options: ['KS', 'MO', 'NE', 'IA', 'OK', 'CO', 'Other'] },
+
+      { section: 'Home / Property', label: 'Property Address', type: 'text' },
+      { section: 'Home / Property', label: 'Approximate Closing Date', type: 'date' },
+      { section: 'Home / Property', label: 'Purchase Price', type: 'currency' },
+      { section: 'Home / Property', label: 'Year Roof Replaced', type: 'year' },
+      { section: 'Home / Property', label: 'Square Footage', type: 'numeric' },
+      { section: 'Home / Property', label: 'Year Built', type: 'year' },
+      { section: 'Home / Property', label: 'Mortgage on Property?', type: 'select', options: ['Yes', 'No'] },
+      
+      { section: 'Auto / Vehicles', label: 'Vehicle Year', type: 'year' },
+      { section: 'Auto / Vehicles', label: 'Vehicle Make', type: 'text' },
+      { section: 'Auto / Vehicles', label: 'Vehicle Model', type: 'text' },
+      { section: 'Auto / Vehicles', label: 'Vehicle VIN', type: 'text' },
+      { section: 'Auto / Vehicles', label: 'Prior Insurance Policy?', type: 'select', options: ['Yes', 'No'] },
+      
+      { section: 'Commercial / Farm', label: 'Legal Business Name', type: 'text' },
+      { section: 'Commercial / Farm', label: 'FEIN (Tax ID)', type: 'ssn' },
+      { section: 'Commercial / Farm', label: 'Year Started', type: 'year' },
+      { section: 'Commercial / Farm', label: 'Est. Annual Income', type: 'currency' },
+      { section: 'Commercial / Farm', label: 'Est. Annual Payroll', type: 'currency' },
+      { section: 'Commercial / Farm', label: 'Farm Location Address', type: 'text' },
+      { section: 'Commercial / Farm', label: 'Total Acres', type: 'numeric' },
+
+      { section: 'Life Insurance', label: 'Coverage Amount Needed', type: 'currency' },
+      { section: 'Life Insurance', label: 'Term Length Needed', type: 'text' },
+      { section: 'Life Insurance', label: 'Smoker / Tobacco Use?', type: 'select', options: ['Yes', 'No'] },
+
+      { section: 'Miscellaneous', label: 'Additional Notes', type: 'textarea' },
+    ];
+
     const CATEGORIES = [
       { id: 'inspection', label: 'Inspection Client', icon: Clipboard },
       { id: 'home', label: 'Homeowners', icon: Home },
@@ -917,9 +957,9 @@
               </div>
               <div className="p-8 grid gap-4 grid-cols-1">
                  <button onClick={() => { setSelectedCats(['inspection']); setAppStep('selection'); }} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">1. Inspection Quick Data Collection</button>
-                 <button onClick={() => setAppStep('selection')} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">2. Quote Data Collection (Standard Form)</button>
-                 <button onClick={() => setAppStep('buildCustomQuote')} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">3. Build a Custom Quote Form</button>
-                 <button onClick={() => setAppStep('buildCustomData')} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">4. Custom Data Collection (Build a form)</button>
+                 <button onClick={() => setAppStep('buildCustomQuote')} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">2. Quote Data Collection (Standard Form with Custom Fields)</button>
+                 <button onClick={() => { setCustomFields([]); setAppStep('buildSpecificFields'); }} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">3. Build Form by Selecting Specific Fields</button>
+                 <button onClick={() => { setCustomFields([]); setAppStep('buildCustomData'); }} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">4. Custom Data Collection (Type out custom fields)</button>
                  <button onClick={() => setAppStep('paymentDashboard')} className="p-4 bg-gray-50 border border-gray-200 hover:border-[#D4AF37] rounded-xl text-left font-bold transition-all shadow-sm">5. Payment Collection</button>
               </div>
             </div>
@@ -1009,7 +1049,7 @@
             <div className="max-w-3xl w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
               <div className="p-8">
                 <button onClick={() => setAppStep('dashboard')} className="mb-6 text-sm font-bold text-gray-500 hover:text-black">&larr; Back to Dashboard</button>
-                <h2 className="text-2xl font-bold mb-4">Build Custom Quote Form</h2>
+                <h2 className="text-2xl font-bold mb-4">Quote Data Collection Builder</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-6">
                   {CATEGORIES.map(cat => (
                     <button key={cat.id} onClick={() => toggleCategory(cat.id)} className={`p-2 rounded border text-xs font-bold transition-all ${selectedCats.includes(cat.id) ? 'bg-yellow-50 border-[#D4AF37] shadow-sm' : 'bg-gray-50 hover:bg-gray-100'}`}>{cat.label}</button>
@@ -1055,6 +1095,70 @@
         );
       }
 
+      if (appStep === 'buildSpecificFields') {
+        const sections = [...new Set(AVAILABLE_FIELDS.map(f => f.section))];
+        return (
+          <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col items-center">
+            <div className="max-w-3xl w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+              <div className="p-8">
+                <button onClick={() => setAppStep('dashboard')} className="mb-6 text-sm font-bold text-gray-500 hover:text-black">&larr; Back to Dashboard</button>
+                <h2 className="text-2xl font-bold mb-4">Build Form by Selecting Fields</h2>
+                <input placeholder="Form Title (e.g. Life Insurance Questionnaire)" className="border p-3 rounded w-full mb-6 font-bold bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={customFormTitle} onChange={e => setCustomFormTitle(e.target.value)} />
+                
+                <div className="mb-6">
+                  {sections.map(section => (
+                    <div key={section} className="mb-4">
+                      <h3 className="font-bold text-lg text-[#D4AF37] border-b pb-1 mb-2">{section}</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {AVAILABLE_FIELDS.filter(f => f.section === section).map(f => {
+                          const isSelected = customFields.some(cf => cf.label === f.label);
+                          return (
+                            <label key={f.label} className={`flex items-center gap-2 p-2 rounded border cursor-pointer transition-all text-sm font-medium ${isSelected ? 'bg-yellow-50 border-[#D4AF37] text-black shadow-sm' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'}`}>
+                              <input type="checkbox" checked={isSelected} className="hidden" onChange={e => {
+                                if (e.target.checked) {
+                                  setCustomFields([...customFields, { label: f.label, value: '', type: f.type, options: f.options }]);
+                                } else {
+                                  setCustomFields(customFields.filter(cf => cf.label !== f.label));
+                                }
+                              }} />
+                              {f.label}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 text-sm text-blue-800 font-medium mb-6">
+                  {customFields.length} field(s) selected. They will be displayed on the client's form in the exact order you selected them.
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 border-t pt-4">
+                  <input placeholder="Client First Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={clientFirst} onChange={e => setClientFirst(e.target.value)} />
+                  <input placeholder="Client Last Name" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={clientLast} onChange={e => setClientLast(e.target.value)} />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  <input placeholder="Client Name (for SMS text)" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={smsInfo.name} onChange={e => setSmsInfo({...smsInfo, name: e.target.value})} />
+                  <input placeholder="Phone Number" className="border p-3 rounded bg-gray-50 focus:ring-2 ring-[#D4AF37] outline-none" value={smsInfo.phone} onChange={e => setSmsInfo({...smsInfo, phone: e.target.value})} />
+                </div>
+                <div className="flex gap-2 mb-4">
+                  <button disabled={customFields.length === 0} onClick={() => handleSendSms('customData')} className="bg-black text-white px-4 py-3 rounded font-bold hover:bg-gray-800 flex-grow shadow-md transition-colors disabled:opacity-50">Send Custom Form SMS</button>
+                  <button disabled={customFields.length === 0} onClick={() => handleCopyLink('customData')} className="bg-gray-200 text-black px-4 py-3 rounded font-bold hover:bg-gray-300 transition-colors shadow-sm disabled:opacity-50"><Copy className="w-5 h-5"/></button>
+                </div>
+                <div className="border-t pt-4">
+                  <button disabled={customFields.length === 0} onClick={() => {
+                    setInsured({...insured, first1: clientFirst, last1: clientLast});
+                    setAppStep('customDataClient');
+                    setIsClientMode(false);
+                  }} className="w-full bg-[#D4AF37] text-black px-4 py-3 rounded font-bold hover:bg-[#b5952f] shadow-md transition-colors disabled:opacity-50">Fill Out Custom Form Now (Agent)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
       if (appStep === 'customDataClient') {
         return (
           <div className="min-h-screen bg-gray-50 p-4 md:p-8 flex flex-col items-center">
@@ -1077,14 +1181,35 @@
                       <input placeholder="Last Name" autoComplete="family-name" className="border p-3 rounded w-full bg-gray-50 focus:bg-white focus:ring-2 ring-[#D4AF37] outline-none transition-all" value={insured.last1} onChange={e => setInsured({...insured, last1: e.target.value})} />
                     </div>
                   </div>
-                  {customFields.map((f, i) => (
-                    <div key={i}>
-                      <label className="text-sm font-bold text-gray-700 block mb-1">{f.label}</label>
-                      <input className="border p-3 rounded w-full bg-gray-50 focus:bg-white focus:ring-2 ring-[#D4AF37] outline-none transition-all" value={f.value} onChange={e => {
-                        const newF = [...customFields]; newF[i].value = e.target.value; setCustomFields(newF);
-                      }} />
-                    </div>
-                  ))}
+                  {customFields.map((f, i) => {
+                    const handleFieldChange = (val) => {
+                      if (f.type === 'dob') val = formatDOB(val);
+                      if (f.type === 'currency') val = formatCurrency(val);
+                      const newF = [...customFields]; newF[i].value = val; setCustomFields(newF);
+                    };
+                    return (
+                      <div key={i}>
+                        <label className="text-sm font-bold text-gray-700 block mb-1">{f.label}</label>
+                        {f.type === 'textarea' ? (
+                          <textarea className="border p-3 rounded w-full bg-gray-50 focus:bg-white focus:ring-2 ring-[#D4AF37] outline-none transition-all h-24" value={f.value} onChange={e => handleFieldChange(e.target.value)} />
+                        ) : f.type === 'select' ? (
+                          <select className={`border p-3 rounded w-full outline-none focus:ring-2 ring-[#D4AF37] transition-all ${!f.value ? 'bg-gray-50 text-gray-400' : 'bg-white text-black font-semibold'}`} value={f.value} onChange={e => handleFieldChange(e.target.value)}>
+                            <option value="" disabled>Select...</option>
+                            {f.options && f.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                          </select>
+                        ) : (
+                          <input 
+                            type={f.type === 'ssn' ? 'password' : f.type === 'email' ? 'email' : f.type === 'tel' ? 'tel' : 'text'}
+                            inputMode={f.type === 'numeric' || f.type === 'dob' || f.type === 'year' || f.type === 'ssn' ? 'numeric' : undefined}
+                            className="border p-3 rounded w-full bg-gray-50 focus:bg-white focus:ring-2 ring-[#D4AF37] outline-none transition-all" 
+                            value={f.value} 
+                            onChange={e => handleFieldChange(e.target.value)} 
+                          />
+                        )}
+                        {f.type === 'ssn' && <p className="text-[10px] text-gray-500 mt-1 font-bold">Encrypted securely</p>}
+                      </div>
+                    );
+                  })}
                   <button onClick={() => submitToDatabase(false)} disabled={isSubmitting} className="w-full mt-6 bg-[#D4AF37] hover:bg-[#C5A017] text-black py-4 rounded-xl font-extrabold flex justify-center items-center gap-2 shadow-lg transition-all disabled:opacity-50">
                     {isSubmitting ? 'Saving Securely...' : <><CheckCircle className="w-6 h-6"/> Submit Form Securely</>}
                   </button>
